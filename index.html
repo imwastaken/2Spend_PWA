@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="TT Stats">
+    <title>TT Stats Tracker</title>
+    <style>
+        :root {
+            --bg: #F2F2F7;
+            --card: #FFFFFF;
+            --text: #000000;
+            --accent: #007AFF;
+            --gray: #8E8E93;
+            --green: #34C759;
+            --red: #FF3B30;
+            --border: #C6C6C8;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0 0 90px 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3 { margin: 0 0 15px 0; font-weight: 600; }
+        
+        .header {
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .container { padding: 15px; }
+        
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 13px; color: var(--gray); margin-bottom: 5px; text-transform: uppercase; }
+        
+        input, button, textarea {
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 16px;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            appearance: none;
+            outline: none;
+        }
+
+        input:focus, textarea:focus { border-color: var(--accent); }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        button:active { opacity: 0.8; }
+
+        textarea { height: 60vh; resize: none; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: var(--bg);
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .stat-box .period { font-size: 12px; color: var(--gray); margin-bottom: 4px; font-weight: 500; }
+        .stat-box .roi { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+        .stat-box .profit { font-size: 14px; color: var(--gray); }
+        
+        .positive { color: var(--green); }
+        .negative { color: var(--red); }
+        .neutral { color: var(--text); }
+
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 100;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            color: var(--gray);
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .tab.active { color: var(--accent); }
+        .tab-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+        .hidden { display: none; }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--bg);
+            font-size: 14px;
+        }
+        .history-item:last-child { border-bottom: none; }
+        .history-date { color: var(--gray); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1 id="header-title">ФАКТ</h1>
+    </div>
+
+    <div class="container">
+        <div id="view-fact" class="view">
+            <div class="card">
+                <h3>Сводка ФАКТ</h3>
+                <div class="stats-grid" id="stats-fact"></div>
+            </div>
+            <div class="card">
+                <h3>Добавить запись</h3>
+                <div class="input-group">
+                    <label>Дата</label>
+                    <input type="date" id="date-fact">
+                </div>
+                <div class="input-group">
+                    <label>Доход (€)</label>
+                    <input type="number" id="income-fact" placeholder="0.00" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Расход (€)</label>
+                    <input type="number" id="expense-fact" placeholder="0.00" step="0.01">
+                </div>
+                <button onclick="addEntry('fact')">Сохранить</button>
+            </div>
+            <div class="card">
+                <h3>История (последние 5)</h3>
+                <div id="history-fact"></div>
+            </div>
+        </div>
+
+        <div id="view-uslov" class="view hidden">
+            <div class="card">
+                <h3>Сводка УСЛОВ</h3>
+                <div class="stats-grid" id="stats-uslov"></div>
+            </div>
+            <div class="card">
+                <h3>Добавить запись</h3>
+                <div class="input-group">
+                    <label>Дата</label>
+                    <input type="date" id="date-uslov">
+                </div>
+                <div class="input-group">
+                    <label>Доход (€)</label>
+                    <input type="number" id="income-uslov" placeholder="0.00" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Расход (€)</label>
+                    <input type="number" id="expense-uslov" placeholder="0.00" step="0.01">
+                </div>
+                <button onclick="addEntry('uslov')">Сохранить</button>
+            </div>
+            <div class="card">
+                <h3>История (последние 5)</h3>
+                <div id="history-uslov"></div>
+            </div>
+        </div>
+
+        <div id="view-notes" class="view hidden">
+            <textarea id="notes-text" placeholder="Связки, крео, баны, идеи..."></textarea>
+        </div>
+    </div>
+
+    <div class="tab-bar">
+        <div class="tab active" onclick="switchTab('fact')">
+            <span class="tab-icon">💰</span>
+            ФАКТ
+        </div>
+        <div class="tab" onclick="switchTab('uslov')">
+            <span class="tab-icon">📊</span>
+            УСЛОВ
+        </div>
+        <div class="tab" onclick="switchTab('notes')">
+            <span class="tab-icon">📝</span>
+            ЗАМЕТКИ
+        </div>
+    </div>
+
+    <script>
+        // Инициализация дат
+        document.getElementById('date-fact').valueAsDate = new Date();
+        document.getElementById('date-uslov').valueAsDate = new Date();
+
+        // База данных в LocalStorage
+        let data = JSON.parse(localStorage.getItem('tt_tracker_data')) || { fact: [], uslov: [], notes: '' };
+        document.getElementById('notes-text').value = data.notes;
+
+        // Автосохранение заметок
+        document.getElementById('notes-text').addEventListener('input', (e) => {
+            data.notes = e.target.value;
+            saveData();
+        });
+
+        function saveData() {
+            localStorage.setItem('tt_tracker_data', JSON.stringify(data));
+            renderAll();
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            
+            document.getElementById(`view-${tab}`).classList.remove('hidden');
+            event.currentTarget.classList.add('active');
+            
+            const titles = { 'fact': 'ФАКТ', 'uslov': 'УСЛОВ', 'notes': 'Заметки' };
+            document.getElementById('header-title').innerText = titles[tab];
+        }
+
+        function addEntry(type) {
+            const date = document.getElementById(`date-${type}`).value;
+            const income = parseFloat(document.getElementById(`income-${type}`).value) || 0;
+            const expense = parseFloat(document.getElementById(`expense-${type}`).value) || 0;
+
+            if (!date) return alert('Выбери дату');
+
+            // Обновляем или добавляем
+            const existingIndex = data[type].findIndex(item => item.date === date);
+            if (existingIndex >= 0) {
+                data[type][existingIndex].income += income;
+                data[type][existingIndex].expense += expense;
+            } else {
+                data[type].push({ date, income, expense });
+            }
+
+            // Очистка полей
+            document.getElementById(`income-${type}`).value = '';
+            document.getElementById(`expense-${type}`).value = '';
+            saveData();
+        }
+
+        function calculateStats(records) {
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+            
+            // Начало недели (Понедельник)
+            const dayOfWeek = now.getDay() || 7; 
+            const startOfWeek = new Date(now);
+            startOfWeek.setDate(now.getDate() - dayOfWeek + 1);
+            const startOfWeekStr = startOfWeek.toISOString().split('T')[0];
+            
+            const startOfMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+
+            let stats = {
+                day: { i: 0, e: 0 },
+                week: { i: 0, e: 0 },
+                month: { i: 0, e: 0 },
+                all: { i: 0, e: 0 }
+            };
+
+            records.forEach(r => {
+                stats.all.i += r.income; stats.all.e += r.expense;
+                if (r.date === todayStr) { stats.day.i += r.income; stats.day.e += r.expense; }
+                if (r.date >= startOfWeekStr) { stats.week.i += r.income; stats.week.e += r.expense; }
+                if (r.date >= startOfMonthStr) { stats.month.i += r.income; stats.month.e += r.expense; }
+            });
+
+            return stats;
+        }
+
+        function renderStats(type) {
+            const stats = calculateStats(data[type]);
+            const container = document.getElementById(`stats-${type}`);
+            
+            const periods = [
+                { key: 'day', label: 'СЕГОДНЯ' },
+                { key: 'week', label: 'НЕДЕЛЯ' },
+                { key: 'month', label: 'МЕСЯЦ' },
+                { key: 'all', label: 'ВСЕ ВРЕМЯ' }
+            ];
+
+            container.innerHTML = periods.map(p => {
+                const i = stats[p.key].i;
+                const e = stats[p.key].e;
+                const profit = i - e;
+                let roi = e > 0 ? (profit / e) * 100 : (i > 0 ? 100 : 0);
+                
+                const colorClass = profit > 0 ? 'positive' : (profit < 0 ? 'negative' : 'neutral');
+                const roiPrefix = profit > 0 ? '+' : '';
+
+                return `
+                    <div class="stat-box">
+                        <div class="period">${p.label}</div>
+                        <div class="roi ${colorClass}">${roiPrefix}${roi.toFixed(1)}% ROI</div>
+                        <div class="profit ${colorClass}">${profit >= 0 ? '+' : ''}${profit.toFixed(2)} €</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderHistory(type) {
+            const container = document.getElementById(`history-${type}`);
+            const sorted = [...data[type]].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+            
+            if (sorted.length === 0) {
+                container.innerHTML = '<div class="history-item">Записей пока нет</div>';
+                return;
+            }
+
+            container.innerHTML = sorted.map(item => {
+                const profit = item.income - item.expense;
+                const color = profit > 0 ? 'positive' : (profit < 0 ? 'negative' : 'neutral');
+                return `
+                    <div class="history-item">
+                        <span class="history-date">${item.date}</span>
+                        <span class="${color}">${profit > 0 ? '+' : ''}${profit.toFixed(2)} €</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderAll() {
+            renderStats('fact');
+            renderStats('uslov');
+            renderHistory('fact');
+            renderHistory('uslov');
+        }
+
+        // Первичный рендер
+        renderAll();
+    </script>
+</body>
+</html>
