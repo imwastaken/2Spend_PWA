@@ -10,133 +10,146 @@
     <style>
         :root {
             --bg: #000000;
-            --card: #1C1C1E;
+            --card: #1A1A1C;
             --text: #FFFFFF;
             --text-secondary: #8E8E93;
             --accent: #FF9F0A;
             --accent-gradient: linear-gradient(135deg, #FF9F0A, #FF7A00);
+            --accent-glow: rgba(255, 159, 10, 0.15);
             --green: #32D74B;
             --red: #FF453A;
             --yellow: #FFD60A;
-            --border: #38383A;
+            --border: #2C2C2E;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+        /* ЖЕСТКАЯ ФИКСАЦИЯ PWA (Анти-резинка) */
+        html, body {
+            width: 100%; height: 100%;
+            margin: 0; padding: 0;
+            overflow: hidden; /* Блокируем скролл всего документа */
             background-color: var(--bg);
             color: var(--text);
-            margin: 0;
-            padding: 0 0 100px 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
             -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
+        }
+
+        .app-wrapper {
+            position: relative; width: 100%; height: 100%; display: flex; flex-direction: column;
+            background: radial-gradient(circle at 50% 0%, var(--accent-glow) 0%, transparent 60%), var(--bg);
+            transition: background 0.5s ease;
         }
 
         h1, h2, h3 { margin: 0; font-weight: 700; }
         
         .header {
             padding: max(20px, env(safe-area-inset-top)) 20px 15px 20px;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            z-index: 10; display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid rgba(255,255,255,0.05);
+            flex-shrink: 0;
         }
 
         .header h1 { font-size: 28px; letter-spacing: 0.5px; }
         .header-actions { display: flex; gap: 16px; align-items: center; }
         
         .icon-btn {
-            background: transparent; color: var(--accent);
-            border: none; padding: 0; cursor: pointer; display: flex;
-            transition: transform 0.2s;
+            background: transparent; color: var(--accent); border: none; padding: 0;
+            cursor: pointer; display: flex; transition: transform 0.2s;
         }
         .icon-btn:active { transform: scale(0.9); }
 
-        .container { padding: 0 16px 16px 16px; }
-        .view { animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* СКРОЛЛИРУЕМАЯ ЗОНА */
+        .content-area {
+            flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+            padding: 16px 16px 120px 16px; /* Отступ снизу под таб-бар */
+        }
+
+        /* АНИМАЦИИ ВЬЮХ */
+        .view { animation: slideUpFade 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
         .hidden { display: none !important; }
 
-        .card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .card {
+            background: linear-gradient(145deg, #222225, #1A1A1C);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 20px; padding: 16px; margin-bottom: 16px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
 
         /* Статистика */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
-        .stat-box { background: var(--card); padding: 16px; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .stat-box { background: var(--card); padding: 18px 16px; }
         .stat-box.full-width { grid-column: span 2; }
-        .stat-box .period { font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;}
-        .stat-box .roi { font-size: 26px; font-weight: 800; margin-bottom: 4px; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-box .period { font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+        .stat-box .roi { font-size: 28px; font-weight: 800; margin-bottom: 4px; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .stat-box .profit { font-size: 15px; font-weight: 600; }
         .positive { color: var(--green); } .negative { color: var(--red); } .neutral { color: var(--text); }
 
         /* История */
-        .section-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; padding-left: 4px; }
-        .history-list { background: var(--card); border-radius: 16px; overflow: hidden; }
+        .section-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; padding-left: 4px; }
+        .history-list { background: linear-gradient(145deg, #222225, #1A1A1C); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.03); }
         .history-item { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .history-item:last-child { border-bottom: none; }
         .history-date { font-weight: 600; font-size: 16px; margin-bottom: 4px; }
         .history-spend { font-size: 13px; color: var(--text-secondary); }
         .history-right { text-align: right; }
 
-        /* Задачи (Свайпы) */
-        .task-list { border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; gap: 10px; }
-        .task-wrapper { position: relative; border-radius: 16px; overflow: hidden; background: var(--border); }
+        /* Задачи */
+        .task-list { border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; gap: 12px; }
+        .task-wrapper { position: relative; border-radius: 20px; overflow: hidden; background: var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
-        .task-bg {
-            position: absolute; top: 0; bottom: 0; width: 100%; display: flex; align-items: center; padding: 0 20px; font-weight: 600; color: white;
-        }
+        .task-bg { position: absolute; top: 0; bottom: 0; width: 100%; display: flex; align-items: center; padding: 0 20px; font-weight: 600; color: white; }
         .task-bg-done { background: var(--green); left: 0; justify-content: flex-start; }
         .task-bg-delete { background: var(--red); right: 0; justify-content: flex-end; }
         
-        .task-content {
-            background: var(--card); position: relative; z-index: 2; padding: 16px; border-radius: 16px;
-            display: flex; flex-direction: column; gap: 8px; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-        
-        .task-wrapper.is-done .task-content { opacity: 0.6; }
+        .task-content { background: linear-gradient(145deg, #222225, #1A1A1C); position: relative; z-index: 2; padding: 16px; border-radius: 20px; display: flex; flex-direction: column; gap: 10px; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .task-wrapper.is-done .task-content { opacity: 0.5; }
         .task-wrapper.is-done .task-title { text-decoration: line-through; color: var(--text-secondary); }
 
         .task-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
         .task-title { font-size: 16px; font-weight: 500; flex: 1; line-height: 1.3; }
-        .priority-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
-        .prio-red { background: var(--red); box-shadow: 0 0 8px rgba(255, 69, 58, 0.5); }
-        .prio-yellow { background: var(--yellow); box-shadow: 0 0 8px rgba(255, 214, 10, 0.5); }
-        .prio-green { background: var(--green); box-shadow: 0 0 8px rgba(50, 215, 75, 0.5); }
+        .priority-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+        .prio-red { background: var(--red); box-shadow: 0 0 10px rgba(255, 69, 58, 0.4); }
+        .prio-yellow { background: var(--yellow); box-shadow: 0 0 10px rgba(255, 214, 10, 0.4); }
+        .prio-green { background: var(--green); box-shadow: 0 0 10px rgba(50, 215, 75, 0.4); }
 
-        /* Прогресс-бар финансовых целей */
-        .goal-container { margin-top: 4px; }
-        .goal-info { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
-        .progress-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; background: var(--accent-gradient); border-radius: 3px; transition: width 0.5s ease; }
+        /* Обновленный Прогресс-бар */
+        .goal-container { margin-top: 6px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        .goal-info { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; font-weight: 500; }
+        .goal-info span:first-child { color: var(--text-secondary); }
+        .goal-info span:last-child { color: var(--text); }
+        .progress-bar-bg { width: 100%; height: 6px; background: #2C2C2E; border-radius: 4px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--accent-gradient); border-radius: 4px; transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
 
-        /* Навигация */
+        /* Навигация (Жестко внизу) */
         .tab-bar {
-            position: fixed; bottom: 0; width: 100%; background: rgba(28, 28, 30, 0.85);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-top: 1px solid var(--border);
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: rgba(26, 26, 28, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-top: 1px solid rgba(255,255,255,0.05);
             display: flex; padding-bottom: env(safe-area-inset-bottom); z-index: 100;
         }
-        .tab { flex: 1; text-align: center; padding: 12px 0 8px 0; color: var(--text-secondary); font-size: 10px; font-weight: 600; transition: color 0.2s; }
+        .tab { flex: 1; text-align: center; padding: 12px 0 8px 0; color: var(--text-secondary); font-size: 11px; font-weight: 600; transition: color 0.3s; }
         .tab.active { color: var(--accent); }
-        .tab svg { width: 24px; height: 24px; margin-bottom: 4px; transition: transform 0.2s, stroke 0.2s; opacity: 0.6; }
-        .tab.active svg { transform: scale(1.1); opacity: 1; stroke: url(#accent-grad); }
+        .tab svg { width: 24px; height: 24px; margin-bottom: 4px; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), stroke 0.3s; opacity: 0.6; }
+        .tab.active svg { transform: scale(1.15) translateY(-2px); opacity: 1; stroke: url(#accent-grad); }
 
         /* Модальные окна */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6);
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
             z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         
         .modal-sheet {
-            position: fixed; bottom: 0; left: 0; right: 0; background: #1C1C1E; border-radius: 24px 24px 0 0;
+            position: absolute; bottom: 0; left: 0; right: 0; background: #1C1C1E; border-radius: 28px 28px 0 0;
             padding: 24px 20px calc(24px + env(safe-area-inset-bottom)) 20px;
-            transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 201;
+            transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .modal-overlay.active .modal-sheet { transform: translateY(0); }
         
@@ -145,29 +158,29 @@
         .modal-close { background: transparent; border: none; color: var(--text-secondary); font-size: 16px; font-weight: 600; padding: 0; }
 
         .input-group { margin-bottom: 16px; }
-        .input-group label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500; }
+        .input-group label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         input[type="text"], input[type="number"], input[type="date"], select {
-            width: 100%; background: #2C2C2E; border: none; color: #fff; padding: 16px;
-            border-radius: 12px; font-size: 16px; outline: none; transition: background 0.2s;
+            width: 100%; background: #2C2C2E; border: 1px solid rgba(255,255,255,0.05); color: #fff; padding: 16px;
+            border-radius: 14px; font-size: 16px; outline: none; transition: background 0.2s, border-color 0.2s;
         }
-        input:focus, select:focus { background: #3A3A3C; }
+        input:focus, select:focus { background: #3A3A3C; border-color: var(--accent); }
         
         .btn-primary {
             width: 100%; background: var(--accent-gradient); color: #fff; border: none; padding: 18px;
-            border-radius: 14px; font-size: 16px; font-weight: 700; margin-top: 10px; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: transform 0.2s;
+            border-radius: 16px; font-size: 17px; font-weight: 700; margin-top: 10px; cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2); transition: transform 0.2s;
         }
-        .btn-primary:active { transform: scale(0.97); }
+        .btn-primary:active { transform: scale(0.96); }
         .flex-row { display: flex; gap: 12px; } .flex-row .input-group { flex: 1; }
 
-        /* Селекторы для задач */
-        .type-selector { display: flex; background: #2C2C2E; border-radius: 12px; padding: 4px; margin-bottom: 16px; }
-        .type-btn { flex: 1; text-align: center; padding: 10px; font-size: 14px; font-weight: 600; color: var(--text-secondary); border-radius: 10px; transition: 0.2s; }
-        .type-btn.active { background: var(--card); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        /* Селекторы */
+        .type-selector { display: flex; background: #2C2C2E; border-radius: 14px; padding: 4px; margin-bottom: 20px; }
+        .type-btn { flex: 1; text-align: center; padding: 12px; font-size: 14px; font-weight: 600; color: var(--text-secondary); border-radius: 10px; transition: 0.3s; }
+        .type-btn.active { background: var(--card); color: var(--text); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 
         .prio-selector { display: flex; gap: 15px; margin-top: 5px; }
-        .prio-opt { width: 30px; height: 30px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: 0.2s; }
-        .prio-opt.active { border-color: var(--text); transform: scale(1.1); }
+        .prio-opt { width: 34px; height: 34px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: 0.2s; }
+        .prio-opt.active { border-color: var(--text); transform: scale(1.1); box-shadow: 0 0 15px currentColor; }
 
         /* Темы */
         .theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 10px; }
@@ -175,20 +188,20 @@
         .theme-circle.active { border-color: var(--text); }
         .theme-circle::after { content: ''; width: 60%; height: 60%; border-radius: 50%; background: currentColor; }
 
-        /* Заметки */
-        .note-list { display: flex; flex-direction: column; gap: 12px; }
-        .note-item { background: var(--card); padding: 16px; border-radius: 16px; cursor: pointer; transition: transform 0.2s; }
-        .note-item:active { transform: scale(0.98); }
-        .note-item-title { font-weight: 600; font-size: 16px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .note-item-preview { font-size: 14px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* Скрытая кнопка архива */
+        .archive-btn { width: 100%; padding: 16px; background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border); border-radius: 14px; font-size: 16px; font-weight: 600; margin-top: 20px; text-align: left; display: flex; justify-content: space-between; }
         
-        .full-screen-modal {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 300;
-            transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column;
-        }
+        /* Заметки */
+        .note-item { background: linear-gradient(145deg, #222225, #1A1A1C); padding: 18px; border-radius: 20px; cursor: pointer; transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.03); margin-bottom: 12px; }
+        .note-item:active { transform: scale(0.97); }
+        .note-item-title { font-weight: 700; font-size: 16px; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .note-item-preview { font-size: 14px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; }
+        
+        /* Полноэкранные модалки */
+        .full-screen-modal { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 300; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; }
         .full-screen-modal.active { transform: translateX(0); }
-        .note-editor-header { padding: max(10px, env(safe-area-inset-top)) 16px 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
-        .note-textarea { flex: 1; width: 100%; background: transparent; border: none; color: #fff; padding: 20px; font-size: 17px; line-height: 1.5; outline: none; resize: none; }
+        .note-editor-header { padding: max(20px, env(safe-area-inset-top)) 16px 15px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.5); backdrop-filter: blur(20px); }
+        .note-textarea { flex: 1; width: 100%; background: transparent; border: none; color: #fff; padding: 20px; font-size: 17px; line-height: 1.5; outline: none; resize: none; -webkit-overflow-scrolling: touch; }
     </style>
 </head>
 <body>
@@ -202,44 +215,59 @@
         </defs>
     </svg>
 
-    <div class="header">
-        <h1 id="header-title">ФАКТ</h1>
-        <div class="header-actions">
-            <button class="icon-btn" onclick="openSettingsModal()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            </button>
-            <button class="icon-btn" onclick="openAddModal()">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            </button>
-        </div>
-    </div>
-
-    <div class="container">
-        <div id="view-fact" class="view">
-            <div class="stats-grid" id="stats-fact"></div>
-            <div class="section-title">История по дням</div>
-            <div class="history-list" id="history-fact"></div>
+    <div class="app-wrapper">
+        <div class="header">
+            <h1 id="header-title">ФИНАНСЫ</h1>
+            <div class="header-actions">
+                <button class="icon-btn" onclick="openSettingsModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </button>
+                <button class="icon-btn" id="main-add-btn" onclick="openAddModal()">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+            </div>
         </div>
 
-        <div id="view-uslov" class="view hidden">
-            <div class="stats-grid" id="stats-uslov"></div>
-            <div class="section-title">История по дням</div>
-            <div class="history-list" id="history-uslov"></div>
+        <div class="content-area">
+            <div id="view-finances" class="view">
+                <div class="stats-grid" id="stats-uslov"></div>
+                <div class="section-title">История по дням</div>
+                <div class="history-list" id="history-uslov"></div>
+            </div>
+
+            <div id="view-tasks" class="view hidden">
+                <div class="task-list" id="tasks-list"></div>
+            </div>
+
+            <div id="view-notes" class="view hidden">
+                <div id="notes-list"></div>
+            </div>
+
+            <div id="view-fact" class="view hidden">
+                <div style="padding: 12px; background: rgba(255,69,58,0.1); color: var(--red); border-radius: 12px; margin-bottom: 20px; font-size: 14px; text-align: center; border: 1px solid rgba(255,69,58,0.2);">Это архивная вкладка. Для возврата выбери другой раздел снизу.</div>
+                <div class="stats-grid" id="stats-fact"></div>
+                <div class="section-title">Архивная история</div>
+                <div class="history-list" id="history-fact"></div>
+            </div>
         </div>
 
-        <div id="view-tasks" class="view hidden">
-            <div class="task-list" id="tasks-list"></div>
-        </div>
-
-        <div id="view-notes" class="view hidden">
-            <div class="note-list" id="notes-list"></div>
+        <div class="tab-bar" id="bottom-nav">
+            <div class="tab active" onclick="switchTab('finances')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><br>ФИНАНСЫ
+            </div>
+            <div class="tab" onclick="switchTab('tasks')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg><br>ЗАДАЧИ
+            </div>
+            <div class="tab" onclick="switchTab('notes')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><br>ЗАМЕТКИ
+            </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="stat-modal-overlay" onclick="closeModals(event)">
         <div class="modal-sheet" id="stat-modal-sheet">
             <div class="modal-header">
-                <div class="modal-title" id="stat-modal-title">Новая запись</div>
+                <div class="modal-title" id="stat-modal-title">Добавить финансы</div>
                 <button class="modal-close" onclick="forceCloseModals()">Отмена</button>
             </div>
             <div class="input-group"><label>Дата</label><input type="date" id="stat-date"></div>
@@ -260,12 +288,12 @@
             
             <div class="type-selector">
                 <div class="type-btn active" id="task-type-regular" onclick="setTaskType('regular')">Обычная</div>
-                <div class="type-btn" id="task-type-goal" onclick="setTaskType('goal')">Цель (УСЛОВ)</div>
+                <div class="type-btn" id="task-type-goal" onclick="setTaskType('goal')">Цель профита</div>
             </div>
 
             <div class="input-group">
                 <label>Описание</label>
-                <input type="text" id="task-text" placeholder="Запустить TikTok, подать апелляцию...">
+                <input type="text" id="task-text" placeholder="Запустить кампании, выгрузить крео...">
             </div>
 
             <div id="task-goal-fields" class="hidden">
@@ -288,9 +316,9 @@
             <div class="input-group">
                 <label>Приоритет</label>
                 <div class="prio-selector">
-                    <div class="prio-opt" style="background: var(--red);" onclick="setPrio('red')" id="prio-red"></div>
-                    <div class="prio-opt active" style="background: var(--yellow);" onclick="setPrio('yellow')" id="prio-yellow"></div>
-                    <div class="prio-opt" style="background: var(--green);" onclick="setPrio('green')" id="prio-green"></div>
+                    <div class="prio-opt" style="color: var(--red);" onclick="setPrio('red')" id="prio-red"></div>
+                    <div class="prio-opt active" style="color: var(--yellow);" onclick="setPrio('yellow')" id="prio-yellow"></div>
+                    <div class="prio-opt" style="color: var(--green);" onclick="setPrio('green')" id="prio-green"></div>
                 </div>
             </div>
 
@@ -313,62 +341,46 @@
                     <div class="theme-circle" style="color: #FF453A;" onclick="setTheme('red')" id="theme-red"></div>
                 </div>
             </div>
+            
+            <button class="archive-btn" onclick="openArchive()">
+                <span>Скрытая сводка (ФАКТ)</span>
+                <span style="color: var(--text-secondary)">></span>
+            </button>
         </div>
     </div>
 
     <div class="full-screen-modal" id="note-editor">
         <div class="note-editor-header">
-            <button class="modal-close" onclick="closeNoteEditor()" style="color: var(--accent);">< Назад</button>
-            <button class="modal-close" onclick="deleteCurrentNote()" style="color: var(--red);">Удалить</button>
+            <button class="modal-close" onclick="closeNoteEditor()" style="color: var(--accent); font-size: 16px;">Отменить</button>
+            <div style="font-weight: 600; font-size: 16px;">Заметка</div>
+            <button class="modal-close" onclick="deleteCurrentNote()" style="color: var(--red); font-size: 16px;">Удалить</button>
         </div>
-        <textarea class="note-textarea" id="note-textarea" placeholder="Записывай сетапы, статусы аккаунтов, идеи..."></textarea>
-    </div>
-
-    <div class="tab-bar">
-        <div class="tab active" onclick="switchTab('fact')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4H6a2 2 0 0 1-2-2V6Z"/></svg><br>ФАКТ
-        </div>
-        <div class="tab" onclick="switchTab('uslov')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><br>УСЛОВ
-        </div>
-        <div class="tab" onclick="switchTab('tasks')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg><br>ЗАДАЧИ
-        </div>
-        <div class="tab" onclick="switchTab('notes')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><br>ЗАМЕТКИ
-        </div>
+        <textarea class="note-textarea" id="note-textarea" placeholder="Начни писать..."></textarea>
     </div>
 
     <script>
-        // === ИНИЦИАЛИЗАЦИЯ И ТЕМЫ ===
-        let currentTab = 'fact';
+        let currentTab = 'finances'; // alias for 'uslov'
         let currentNoteId = null;
         let newTaskType = 'regular';
         let newTaskPrio = 'yellow';
+        let targetTypeForAdd = 'uslov'; 
 
         let data = JSON.parse(localStorage.getItem('2spend_data_v3')) || { 
             fact: [], uslov: [], tasks: [], notes: [], settings: { theme: 'orange' }
         };
 
-        // Миграция старых данных
-        const oldData = JSON.parse(localStorage.getItem('2spend_data_v2'));
-        if (oldData && !localStorage.getItem('2spend_data_v3')) {
-            data.fact = oldData.fact || []; data.uslov = oldData.uslov || [];
-            data.tasks = oldData.tasks || []; data.notes = oldData.notes || [];
-            saveData();
-        }
-
         const THEMES = {
-            orange: { start: '#FF9F0A', end: '#FF7A00' },
-            green: { start: '#32D74B', end: '#28CD41' },
-            purple: { start: '#BF5AF2', end: '#AF52DE' },
-            red: { start: '#FF453A', end: '#FF3B30' }
+            orange: { start: '#FF9F0A', end: '#FF7A00', glow: 'rgba(255, 159, 10, 0.15)' },
+            green: { start: '#32D74B', end: '#28CD41', glow: 'rgba(50, 215, 75, 0.15)' },
+            purple: { start: '#BF5AF2', end: '#AF52DE', glow: 'rgba(191, 90, 242, 0.15)' },
+            red: { start: '#FF453A', end: '#FF3B30', glow: 'rgba(255, 69, 58, 0.15)' }
         };
 
         function applyTheme(colorKey) {
             const t = THEMES[colorKey];
             document.documentElement.style.setProperty('--accent', t.start);
             document.documentElement.style.setProperty('--accent-gradient', `linear-gradient(135deg, ${t.start}, ${t.end})`);
+            document.documentElement.style.setProperty('--accent-glow', t.glow);
             document.getElementById('grad-start').setAttribute('stop-color', t.start);
             document.getElementById('grad-end').setAttribute('stop-color', t.end);
             
@@ -377,9 +389,7 @@
         }
 
         function setTheme(colorKey) {
-            data.settings.theme = colorKey;
-            applyTheme(colorKey);
-            saveData();
+            data.settings.theme = colorKey; applyTheme(colorKey); saveData();
         }
         applyTheme(data.settings.theme);
         document.getElementById('stat-date').value = new Date().toISOString().split('T')[0];
@@ -389,17 +399,36 @@
         // === НАВИГАЦИЯ И МОДАЛКИ ===
         function switchTab(tab) {
             currentTab = tab;
-            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+            targetTypeForAdd = (tab === 'finances') ? 'uslov' : null;
+            
+            document.querySelectorAll('.view').forEach(v => {
+                v.classList.add('hidden');
+                v.style.animation = 'none'; // reset animation
+            });
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(`view-${tab}`).classList.remove('hidden');
-            event.currentTarget.classList.add('active');
-            const titles = { 'fact': 'ФАКТ', 'uslov': 'УСЛОВ', 'tasks': 'ЗАДАЧИ', 'notes': 'ЗАМЕТКИ' };
+            
+            const activeView = document.getElementById(`view-${tab}`);
+            activeView.classList.remove('hidden');
+            setTimeout(() => activeView.style.animation = '', 10);
+            
+            if (tab !== 'fact') {
+                event.currentTarget.classList.add('active');
+            }
+            
+            const titles = { 'finances': 'ФИНАНСЫ', 'tasks': 'ЗАДАЧИ', 'notes': 'ЗАМЕТКИ', 'fact': 'ФАКТ (АРХИВ)' };
             document.getElementById('header-title').innerText = titles[tab];
         }
 
+        function openArchive() {
+            forceCloseModals();
+            switchTab('fact');
+            targetTypeForAdd = 'fact'; // Позволяем добавлять в архив, если юзер там находится
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        }
+
         function openAddModal() {
-            if (currentTab === 'fact' || currentTab === 'uslov') {
-                document.getElementById('stat-modal-title').innerText = currentTab === 'fact' ? 'ФАКТ: Запись' : 'УСЛОВ: Запись';
+            if (currentTab === 'finances' || currentTab === 'fact') {
+                document.getElementById('stat-modal-title').innerText = currentTab === 'fact' ? 'Добавить в архив' : 'Добавить финансы';
                 document.getElementById('stat-modal-overlay').classList.add('active');
             } else if (currentTab === 'tasks') {
                 document.getElementById('task-modal-overlay').classList.add('active');
@@ -420,9 +449,10 @@
             const expense = parseFloat(document.getElementById('stat-expense').value) || 0;
             if (!date || (income === 0 && expense === 0)) return alert('Заполни поля');
 
-            const idx = data[currentTab].findIndex(i => i.date === date);
-            if (idx >= 0) { data[currentTab][idx].income += income; data[currentTab][idx].expense += expense; } 
-            else { data[currentTab].push({ date, income, expense }); }
+            const trg = targetTypeForAdd || 'uslov';
+            const idx = data[trg].findIndex(i => i.date === date);
+            if (idx >= 0) { data[trg][idx].income += income; data[trg][idx].expense += expense; } 
+            else { data[trg].push({ date, income, expense }); }
             forceCloseModals(); saveData();
         }
 
@@ -456,9 +486,9 @@
                     <div class="roi ${all.p > 0 ? '' : (all.p < 0 ? 'negative' : 'neutral')}">${all.p > 0 ? '+' : ''}${all.r.toFixed(0)}%</div>
                     <div class="profit ${all.p > 0 ? 'positive' : (all.p < 0 ? 'negative' : 'neutral')}">${all.p >= 0 ? '+' : ''}$${all.p.toFixed(0)}</div>
                 </div>
-                <div class="stat-box full-width" style="border-top: 1px solid var(--border)">
+                <div class="stat-box full-width" style="border-top: 1px solid rgba(255,255,255,0.05)">
                     <div class="period">СРЕДНИЙ ПРОФИТ В ДЕНЬ</div>
-                    <div class="roi ${avg > 0 ? '' : (avg < 0 ? 'negative' : 'neutral')}">${avg >= 0 ? '+' : ''}$${avg.toFixed(0)}</div>
+                    <div class="roi ${avg > 0 ? '' : (avg < 0 ? 'negative' : 'neutral')}" style="font-size: 24px;">${avg >= 0 ? '+' : ''}$${avg.toFixed(0)}</div>
                 </div>
             `;
         }
@@ -466,7 +496,7 @@
         function renderHistory(type) {
             const cont = document.getElementById(`history-${type}`);
             const sorted = [...data[type]].sort((a, b) => new Date(b.date) - new Date(a.date));
-            if (!sorted.length) return cont.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-secondary)">Нет записей</div>';
+            if (!sorted.length) return cont.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-secondary)">Нет записей</div>';
 
             cont.innerHTML = sorted.map(item => {
                 const p = item.income - item.expense;
@@ -481,7 +511,7 @@
             }).join('');
         }
 
-        // === ЗАДАЧИ И ЦЕЛИ ===
+        // === ЗАДАЧИ ===
         function setTaskType(t) {
             newTaskType = t;
             document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
@@ -504,7 +534,7 @@
                 task.target = parseFloat(document.getElementById('task-target').value) || 0;
                 task.period = document.getElementById('task-period').value;
             }
-            data.tasks.push(task); // В конец списка, чтоб старые были сверху
+            data.tasks.unshift(task); // В самый верх
             forceCloseModals(); saveData();
         }
 
@@ -525,14 +555,17 @@
 
         function renderTasks() {
             const cont = document.getElementById('tasks-list');
-            if (!data.tasks.length) return cont.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-secondary)">Задач нет</div>';
+            if (!data.tasks.length) return cont.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-secondary)">Задач нет</div>';
 
             cont.innerHTML = data.tasks.map(t => {
                 let goalHtml = '';
                 if (t.type === 'goal') {
                     const current = getGoalProgress(t.period);
-                    const pct = t.target > 0 ? Math.min(100, Math.max(0, (current / t.target) * 100)) : 0;
-                    const labels = { 'day': 'За сегодня', 'week': 'За неделю', 'month': 'За месяц' };
+                    let pct = t.target > 0 ? (current / t.target) * 100 : 0;
+                    pct = Math.max(0, Math.min(100, pct)); // Защита от выхода за края
+                    
+                    const labels = { 'day': 'Собрано за сегодня', 'week': 'Собрано за неделю', 'month': 'Собрано за месяц' };
+                    
                     goalHtml = `
                         <div class="goal-container">
                             <div class="goal-info"><span>${labels[t.period]}</span><span>$${current.toFixed(0)} / $${t.target}</span></div>
@@ -542,8 +575,8 @@
 
                 return `
                     <div class="task-wrapper ${t.done ? 'is-done' : ''}" data-id="${t.id}">
-                        <div class="task-bg task-bg-done">✓ Выполнить</div>
-                        <div class="task-bg task-bg-delete">🗑 Удалить</div>
+                        <div class="task-bg task-bg-done">✓ Выполнено</div>
+                        <div class="task-bg task-bg-delete">Удалить</div>
                         <div class="task-content">
                             <div class="task-header">
                                 <div class="task-title">${t.text}</div>
@@ -572,11 +605,11 @@
                     if (!isDragging) return;
                     const x = e.touches[0].clientX, y = e.touches[0].clientY;
                     const diffX = x - startX, diffY = y - startY;
-                    if (Math.abs(diffX) > Math.abs(diffY)) {
-                        e.preventDefault(); // Блокируем скролл если свайп горизонтальный
+                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
+                        e.preventDefault(); 
                         currentX = Math.max(-100, Math.min(100, diffX));
                         content.style.transform = `translateX(${currentX}px)`;
-                    } else { isDragging = false; } // Если свайп вертикальный - отдаем управление скроллу
+                    } else if (Math.abs(diffY) > 10) { isDragging = false; } 
                 }, {passive: false});
 
                 content.addEventListener('touchend', () => {
@@ -584,12 +617,12 @@
                     content.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
                     const id = wrapper.dataset.id;
                     
-                    if (currentX > 60) { // Свайп вправо - выполнить
+                    if (currentX > 60) {
                         const task = data.tasks.find(t => t.id === id);
                         task.done = !task.done; saveData();
-                    } else if (currentX < -60) { // Свайп влево - удалить
+                    } else if (currentX < -60) {
                         data.tasks = data.tasks.filter(t => t.id !== id); saveData();
-                    } else { content.style.transform = `translateX(0px)`; } // Возврат
+                    } else { content.style.transform = `translateX(0px)`; } 
                     currentX = 0;
                 });
             });
@@ -631,7 +664,7 @@
 
         function renderNotes() {
             const cont = document.getElementById('notes-list');
-            if (!data.notes.length) return cont.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-secondary)">Нет заметок</div>';
+            if (!data.notes.length) return cont.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-secondary)">Нет заметок</div>';
             cont.innerHTML = data.notes.map(n => {
                 const lines = n.text.split('\n').filter(l => l.trim() !== '');
                 const title = lines.length > 0 ? lines[0] : 'Новая заметка';
