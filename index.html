@@ -25,11 +25,8 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         html, body {
-            width: 100%; height: 100%;
-            margin: 0; padding: 0;
-            overflow: hidden;
-            background-color: var(--bg);
-            color: var(--text);
+            width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+            background-color: var(--bg); color: var(--text);
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
             -webkit-font-smoothing: antialiased;
         }
@@ -44,11 +41,9 @@
         
         .header {
             padding: max(20px, env(safe-area-inset-top)) 20px 15px 20px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             z-index: 10; display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            flex-shrink: 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05); flex-shrink: 0;
         }
 
         .header h1 { font-size: 28px; letter-spacing: 0.5px; }
@@ -63,18 +58,20 @@
         @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
         .hidden { display: none !important; }
 
+        .card { background: linear-gradient(145deg, #222225, #1A1A1C); border: 1px solid rgba(255,255,255,0.03); border-radius: 20px; padding: 16px; margin-bottom: 16px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+
         /* Статистика */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 16px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         .stat-box { background: var(--card); padding: 18px 16px; }
         .stat-box.full-width { grid-column: span 2; }
         .stat-box .period { font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
-        .stat-box .roi { font-size: 28px; font-weight: 800; margin-bottom: 4px; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-box .roi { font-size: 24px; font-weight: 800; margin-bottom: 4px; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .stat-box .profit { font-size: 15px; font-weight: 600; }
         .positive { color: var(--green); } .negative { color: var(--red); } .neutral { color: var(--text); }
 
         /* История */
         .section-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; padding-left: 4px; }
-        .history-list { background: linear-gradient(145deg, #222225, #1A1A1C); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.03); }
+        .history-list { background: linear-gradient(145deg, #222225, #1A1A1C); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.03); margin-bottom: 24px; }
         .history-item { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.2s; }
         .history-item:active { background: rgba(255,255,255,0.05); }
         .history-item:last-child { border-bottom: none; }
@@ -112,32 +109,23 @@
             background: rgba(26, 26, 28, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             border-top: 1px solid rgba(255,255,255,0.05); display: flex; padding-bottom: env(safe-area-inset-bottom); z-index: 100;
         }
-        .tab { flex: 1; text-align: center; padding: 12px 0 8px 0; color: var(--text-secondary); font-size: 11px; font-weight: 600; transition: color 0.3s; }
+        .tab { flex: 1; text-align: center; padding: 12px 0 8px 0; color: var(--text-secondary); font-size: 11px; font-weight: 600; transition: color 0.3s; cursor: pointer; }
         .tab.active { color: var(--accent); }
-        .tab svg { width: 24px; height: 24px; margin-bottom: 4px; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), stroke 0.3s; opacity: 0.6; }
-        /* Исправлен баг Safari: убрал stroke url(), вернул var(--accent) */
+        .tab svg { width: 24px; height: 24px; margin-bottom: 4px; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); opacity: 0.6; }
         .tab.active svg { transform: scale(1.15) translateY(-2px); opacity: 1; stroke: var(--accent); }
 
         /* Модальные окна */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-            z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-sheet {
-            position: absolute; bottom: 0; left: 0; right: 0; background: #1C1C1E; border-radius: 28px 28px 0 0;
-            padding: 24px 20px calc(24px + env(safe-area-inset-bottom)) 20px;
-            transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
+        .modal-sheet { position: absolute; bottom: 0; left: 0; right: 0; background: #1C1C1E; border-radius: 28px 28px 0 0; padding: 24px 20px calc(24px + env(safe-area-inset-bottom)) 20px; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
         .modal-overlay.active .modal-sheet { transform: translateY(0); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
         .modal-title { font-size: 20px; font-weight: 700; }
-        .modal-close { background: transparent; border: none; color: var(--text-secondary); font-size: 16px; font-weight: 600; padding: 0; }
+        .modal-close { background: transparent; border: none; color: var(--text-secondary); font-size: 16px; font-weight: 600; padding: 0; cursor: pointer; }
 
         .input-group { margin-bottom: 16px; }
         .input-group label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* Исправлен баг с шириной Date Input */
         input[type="text"], input[type="number"], input[type="date"], select {
             width: 100%; display: block; -webkit-appearance: none; box-sizing: border-box;
             background: #2C2C2E; border: 1px solid rgba(255,255,255,0.05); color: #fff; padding: 16px;
@@ -147,7 +135,6 @@
         
         .btn-primary { width: 100%; background: var(--accent-gradient); color: #fff; border: none; padding: 18px; border-radius: 16px; font-size: 17px; font-weight: 700; margin-top: 10px; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.2); transition: transform 0.2s; }
         .btn-primary:active { transform: scale(0.96); }
-        
         .btn-danger { width: 100%; background: rgba(255, 69, 58, 0.1); color: var(--red); border: 1px solid rgba(255, 69, 58, 0.2); padding: 16px; border-radius: 16px; font-size: 16px; font-weight: 600; margin-top: 12px; cursor: pointer; transition: transform 0.2s; }
         .btn-danger:active { transform: scale(0.96); }
 
@@ -155,7 +142,7 @@
 
         /* Селекторы */
         .type-selector { display: flex; background: #2C2C2E; border-radius: 14px; padding: 4px; margin-bottom: 20px; }
-        .type-btn { flex: 1; text-align: center; padding: 12px; font-size: 14px; font-weight: 600; color: var(--text-secondary); border-radius: 10px; transition: 0.3s; }
+        .type-btn { flex: 1; text-align: center; padding: 12px; font-size: 14px; font-weight: 600; color: var(--text-secondary); border-radius: 10px; transition: 0.3s; cursor: pointer; }
         .type-btn.active { background: var(--card); color: var(--text); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .prio-selector { display: flex; gap: 15px; margin-top: 5px; }
         .prio-opt { width: 34px; height: 34px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: 0.2s; }
@@ -165,7 +152,7 @@
         .theme-circle.active { border-color: var(--text); }
         .theme-circle::after { content: ''; width: 60%; height: 60%; border-radius: 50%; background: currentColor; }
 
-        .archive-btn { width: 100%; padding: 16px; background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border); border-radius: 14px; font-size: 16px; font-weight: 600; margin-top: 20px; text-align: left; display: flex; justify-content: space-between; }
+        .archive-btn { width: 100%; padding: 16px; background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border); border-radius: 14px; font-size: 16px; font-weight: 600; margin-top: 20px; text-align: left; display: flex; justify-content: space-between; cursor: pointer; }
         
         .note-item { background: linear-gradient(145deg, #222225, #1A1A1C); padding: 18px; border-radius: 20px; cursor: pointer; transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.03); margin-bottom: 12px; }
         .note-item:active { transform: scale(0.97); }
@@ -196,6 +183,17 @@
         <div class="content-area">
             <div id="view-finances" class="view">
                 <div class="stats-grid" id="stats-uslov"></div>
+                
+                <div class="card" style="margin-bottom: 24px;">
+                    <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Произвольный период</div>
+                    <div class="flex-row" style="margin-bottom: 12px;">
+                        <input type="date" id="date-from-uslov" style="padding: 12px; font-size: 14px;">
+                        <input type="date" id="date-to-uslov" style="padding: 12px; font-size: 14px;">
+                    </div>
+                    <button class="btn-primary" style="padding: 14px; font-size: 15px; margin-top: 0; border-radius: 12px;" onclick="calcCustomRange('uslov')">Рассчитать</button>
+                    <div id="custom-result-uslov" class="hidden" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.05);"></div>
+                </div>
+
                 <div class="section-title">История по дням</div>
                 <div class="history-list" id="history-uslov"></div>
             </div>
@@ -209,8 +207,20 @@
             </div>
 
             <div id="view-fact" class="view hidden">
-                <div style="padding: 12px; background: rgba(255,69,58,0.1); color: var(--red); border-radius: 12px; margin-bottom: 20px; font-size: 14px; text-align: center; border: 1px solid rgba(255,69,58,0.2);">Это архивная вкладка. Для возврата выбери другой раздел снизу.</div>
+                <div style="padding: 12px; background: rgba(255,69,58,0.1); color: var(--red); border-radius: 12px; margin-bottom: 20px; font-size: 14px; text-align: center; border: 1px solid rgba(255,69,58,0.2);">Архивная вкладка. Для возврата выбери раздел снизу.</div>
+                
                 <div class="stats-grid" id="stats-fact"></div>
+
+                <div class="card" style="margin-bottom: 24px;">
+                    <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Произвольный период</div>
+                    <div class="flex-row" style="margin-bottom: 12px;">
+                        <input type="date" id="date-from-fact" style="padding: 12px; font-size: 14px;">
+                        <input type="date" id="date-to-fact" style="padding: 12px; font-size: 14px;">
+                    </div>
+                    <button class="btn-primary" style="padding: 14px; font-size: 15px; margin-top: 0; border-radius: 12px;" onclick="calcCustomRange('fact')">Рассчитать</button>
+                    <div id="custom-result-fact" class="hidden" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.05);"></div>
+                </div>
+
                 <div class="section-title">Архивная история</div>
                 <div class="history-list" id="history-fact"></div>
             </div>
@@ -247,76 +257,34 @@
 
     <div class="modal-overlay" id="task-modal-overlay" onclick="closeModals(event)">
         <div class="modal-sheet" id="task-modal-sheet">
-            <div class="modal-header">
-                <div class="modal-title">Новая задача</div>
-                <button class="modal-close" onclick="forceCloseModals()">Отмена</button>
-            </div>
-            <div class="type-selector">
-                <div class="type-btn active" id="task-type-regular" onclick="setTaskType('regular')">Обычная</div>
-                <div class="type-btn" id="task-type-goal" onclick="setTaskType('goal')">Цель профита</div>
-            </div>
+            <div class="modal-header"><div class="modal-title">Новая задача</div><button class="modal-close" onclick="forceCloseModals()">Отмена</button></div>
+            <div class="type-selector"><div class="type-btn active" id="task-type-regular" onclick="setTaskType('regular')">Обычная</div><div class="type-btn" id="task-type-goal" onclick="setTaskType('goal')">Цель профита</div></div>
             <div class="input-group"><label>Описание</label><input type="text" id="task-text" placeholder="Сделать крео..."></div>
             <div id="task-goal-fields" class="hidden">
-                <div class="flex-row">
-                    <div class="input-group"><label>Цель ($)</label><input type="number" id="task-target" placeholder="1000"></div>
-                    <div class="input-group"><label>Период</label>
-                        <select id="task-period"><option value="day">За сегодня</option><option value="week">За неделю</option><option value="month">За месяц</option></select>
-                    </div>
-                </div>
+                <div class="flex-row"><div class="input-group"><label>Цель ($)</label><input type="number" id="task-target" placeholder="1000"></div><div class="input-group"><label>Период</label><select id="task-period"><option value="day">За сегодня</option><option value="week">За неделю</option><option value="month">За месяц</option></select></div></div>
             </div>
-            <div class="input-group">
-                <label>Приоритет</label>
-                <div class="prio-selector">
-                    <div class="prio-opt" style="color: var(--red);" onclick="setPrio('red')" id="prio-red"></div>
-                    <div class="prio-opt active" style="color: var(--yellow);" onclick="setPrio('yellow')" id="prio-yellow"></div>
-                    <div class="prio-opt" style="color: var(--green);" onclick="setPrio('green')" id="prio-green"></div>
-                </div>
-            </div>
+            <div class="input-group"><label>Приоритет</label><div class="prio-selector"><div class="prio-opt" style="color: var(--red);" onclick="setPrio('red')" id="prio-red"></div><div class="prio-opt active" style="color: var(--yellow);" onclick="setPrio('yellow')" id="prio-yellow"></div><div class="prio-opt" style="color: var(--green);" onclick="setPrio('green')" id="prio-green"></div></div></div>
             <button class="btn-primary" onclick="saveTask()">Добавить</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="settings-modal-overlay" onclick="closeModals(event)">
         <div class="modal-sheet" id="settings-modal-sheet">
-            <div class="modal-header">
-                <div class="modal-title">Настройки</div>
-                <button class="modal-close" onclick="forceCloseModals()">Готово</button>
-            </div>
-            <div class="input-group">
-                <label>Цветовая тема</label>
-                <div class="theme-grid">
-                    <div class="theme-circle" style="color: #FF9F0A;" onclick="setTheme('orange')" id="theme-orange"></div>
-                    <div class="theme-circle" style="color: #32D74B;" onclick="setTheme('green')" id="theme-green"></div>
-                    <div class="theme-circle" style="color: #BF5AF2;" onclick="setTheme('purple')" id="theme-purple"></div>
-                    <div class="theme-circle" style="color: #FF453A;" onclick="setTheme('red')" id="theme-red"></div>
-                </div>
-            </div>
-            <button class="archive-btn" onclick="openArchive()">
-                <span>Скрытая сводка (ФАКТ)</span><span style="color: var(--text-secondary)">></span>
-            </button>
+            <div class="modal-header"><div class="modal-title">Настройки</div><button class="modal-close" onclick="forceCloseModals()">Готово</button></div>
+            <div class="input-group"><label>Цветовая тема</label><div class="theme-grid"><div class="theme-circle" style="color: #FF9F0A;" onclick="setTheme('orange')" id="theme-orange"></div><div class="theme-circle" style="color: #32D74B;" onclick="setTheme('green')" id="theme-green"></div><div class="theme-circle" style="color: #BF5AF2;" onclick="setTheme('purple')" id="theme-purple"></div><div class="theme-circle" style="color: #FF453A;" onclick="setTheme('red')" id="theme-red"></div></div></div>
+            <button class="archive-btn" onclick="openArchive()"><span>Скрытая сводка (ФАКТ)</span><span style="color: var(--text-secondary)">></span></button>
         </div>
     </div>
 
     <div class="full-screen-modal" id="note-editor">
-        <div class="note-editor-header">
-            <button class="modal-close" onclick="closeNoteEditor()" style="color: var(--accent); font-size: 16px;">Отменить</button>
-            <div style="font-weight: 600; font-size: 16px;">Заметка</div>
-            <button class="modal-close" onclick="deleteCurrentNote()" style="color: var(--red); font-size: 16px;">Удалить</button>
-        </div>
+        <div class="note-editor-header"><button class="modal-close" onclick="closeNoteEditor()" style="color: var(--accent); font-size: 16px;">Отменить</button><div style="font-weight: 600; font-size: 16px;">Заметка</div><button class="modal-close" onclick="deleteCurrentNote()" style="color: var(--red); font-size: 16px;">Удалить</button></div>
         <textarea class="note-textarea" id="note-textarea" placeholder="Начни писать..."></textarea>
     </div>
 
     <script>
         let currentTab = 'finances';
-        let currentNoteId = null;
-        let newTaskType = 'regular';
-        let newTaskPrio = 'yellow';
-        let targetTypeForAdd = 'uslov';
-        
-        // Переменные для режима редактирования
-        let editingDate = null;
-        let editingType = null;
-
+        let currentNoteId = null; let newTaskType = 'regular'; let newTaskPrio = 'yellow'; let targetTypeForAdd = 'uslov';
+        let editingDate = null; let editingType = null;
         let data = JSON.parse(localStorage.getItem('2spend_data_v3')) || { fact: [], uslov: [], tasks: [], notes: [], settings: { theme: 'orange' }};
 
         const THEMES = {
@@ -340,15 +308,11 @@
 
         function saveData() { localStorage.setItem('2spend_data_v3', JSON.stringify(data)); renderAll(); }
 
-        // === НАВИГАЦИЯ И МОДАЛКИ ===
         function switchTab(tab) {
-            currentTab = tab;
-            targetTypeForAdd = (tab === 'finances') ? 'uslov' : null;
+            currentTab = tab; targetTypeForAdd = (tab === 'finances') ? 'uslov' : null;
             document.querySelectorAll('.view').forEach(v => { v.classList.add('hidden'); v.style.animation = 'none'; });
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            const activeView = document.getElementById(`view-${tab}`);
-            activeView.classList.remove('hidden');
-            setTimeout(() => activeView.style.animation = '', 10);
+            const activeView = document.getElementById(`view-${tab}`); activeView.classList.remove('hidden'); setTimeout(() => activeView.style.animation = '', 10);
             if (tab !== 'fact') event.currentTarget.classList.add('active');
             const titles = { 'finances': 'ФИНАНСЫ', 'tasks': 'ЗАДАЧИ', 'notes': 'ЗАМЕТКИ', 'fact': 'ФАКТ (АРХИВ)' };
             document.getElementById('header-title').innerText = titles[tab];
@@ -361,151 +325,99 @@
                 editingDate = null; editingType = null;
                 document.getElementById('stat-modal-title').innerText = currentTab === 'fact' ? 'Добавить в архив' : 'Новая запись';
                 document.getElementById('stat-date').value = new Date().toISOString().split('T')[0];
-                document.getElementById('stat-delete-btn').classList.add('hidden');
-                document.getElementById('stat-modal-overlay').classList.add('active');
-            } else if (currentTab === 'tasks') {
-                document.getElementById('task-modal-overlay').classList.add('active');
-            } else if (currentTab === 'notes') { createNewNote(); }
+                document.getElementById('stat-delete-btn').classList.add('hidden'); document.getElementById('stat-modal-overlay').classList.add('active');
+            } else if (currentTab === 'tasks') { document.getElementById('task-modal-overlay').classList.add('active'); } else if (currentTab === 'notes') { createNewNote(); }
         }
 
         function openEditModal(date, type) {
-            editingDate = date; editingType = type;
-            const record = data[type].find(r => r.date === date);
-            if (!record) return;
-            
+            editingDate = date; editingType = type; const record = data[type].find(r => r.date === date); if (!record) return;
             document.getElementById('stat-modal-title').innerText = 'Редактировать запись';
-            document.getElementById('stat-date').value = record.date;
-            document.getElementById('stat-income').value = record.income;
-            document.getElementById('stat-expense').value = record.expense;
-            document.getElementById('stat-delete-btn').classList.remove('hidden');
-            document.getElementById('stat-modal-overlay').classList.add('active');
+            document.getElementById('stat-date').value = record.date; document.getElementById('stat-income').value = record.income; document.getElementById('stat-expense').value = record.expense;
+            document.getElementById('stat-delete-btn').classList.remove('hidden'); document.getElementById('stat-modal-overlay').classList.add('active');
         }
 
         function openSettingsModal() { document.getElementById('settings-modal-overlay').classList.add('active'); }
         function closeModals(e) { if (e.target.classList.contains('modal-overlay')) forceCloseModals(); }
-        
-        function forceCloseModals() {
-            document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
-            document.getElementById('stat-income').value = ''; document.getElementById('stat-expense').value = '';
-            document.getElementById('task-text').value = ''; document.getElementById('task-target').value = '';
-            editingDate = null; editingType = null;
-        }
+        function forceCloseModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); document.getElementById('stat-income').value = ''; document.getElementById('stat-expense').value = ''; document.getElementById('task-text').value = ''; document.getElementById('task-target').value = ''; editingDate = null; editingType = null; }
 
-        // === СТАТИСТИКА ===
         function saveStat() {
-            const date = document.getElementById('stat-date').value;
-            const income = parseFloat(document.getElementById('stat-income').value) || 0;
-            const expense = parseFloat(document.getElementById('stat-expense').value) || 0;
+            const date = document.getElementById('stat-date').value; const income = parseFloat(document.getElementById('stat-income').value) || 0; const expense = parseFloat(document.getElementById('stat-expense').value) || 0;
             if (!date || (income === 0 && expense === 0)) return alert('Заполни поля');
-
             const trg = editingType || targetTypeForAdd || 'uslov';
-
-            if (editingDate) {
-                // В режиме редактирования удаляем старую запись, чтобы заменить ее новой
-                data[trg] = data[trg].filter(r => r.date !== editingDate);
-            } else {
-                // Если мы просто добавляем, но дата уже есть - суммируем (как раньше)
-                const existingIdx = data[trg].findIndex(r => r.date === date);
-                if (existingIdx >= 0) {
-                    const oldInc = data[trg][existingIdx].income;
-                    const oldExp = data[trg][existingIdx].expense;
-                    data[trg] = data[trg].filter(r => r.date !== date);
-                    data[trg].push({ date, income: income + oldInc, expense: expense + oldExp });
-                    forceCloseModals(); saveData();
-                    return;
-                }
-            }
-
-            data[trg].push({ date, income, expense });
-            forceCloseModals(); saveData();
+            if (editingDate) { data[trg] = data[trg].filter(r => r.date !== editingDate); } 
+            else { const existingIdx = data[trg].findIndex(r => r.date === date); if (existingIdx >= 0) { const oldInc = data[trg][existingIdx].income; const oldExp = data[trg][existingIdx].expense; data[trg] = data[trg].filter(r => r.date !== date); data[trg].push({ date, income: income + oldInc, expense: expense + oldExp }); forceCloseModals(); saveData(); return; } }
+            data[trg].push({ date, income, expense }); forceCloseModals(); saveData();
         }
 
-        function deleteStat() {
-            if(!confirm('Точно удалить эту запись?')) return;
-            const trg = editingType || targetTypeForAdd || 'uslov';
-            data[trg] = data[trg].filter(r => r.date !== editingDate);
-            forceCloseModals(); saveData();
+        function deleteStat() { if(!confirm('Точно удалить эту запись?')) return; const trg = editingType || targetTypeForAdd || 'uslov'; data[trg] = data[trg].filter(r => r.date !== editingDate); forceCloseModals(); saveData(); }
+
+        function calcROI(i, e) { const p = i - e; return { p, r: e > 0 ? (p/e)*100 : (i > 0 ? 100 : 0) }; }
+
+        function getDates() {
+            const now = new Date(); const todayStr = now.toISOString().split('T')[0];
+            const dOw = now.getDay() || 7; const sOw = new Date(now); sOw.setDate(now.getDate() - dOw + 1); const startW = sOw.toISOString().split('T')[0];
+            const startM = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+            return { todayStr, startW, startM };
         }
 
         function renderStats(type) {
             const cont = document.getElementById(`stats-${type}`);
-            let stats = { day: {i:0, e:0}, all: {i:0, e:0} };
-            const todayStr = new Date().toISOString().split('T')[0];
-            let unique = new Set();
+            let stats = { day: {i:0, e:0}, week: {i:0, e:0}, month: {i:0, e:0}, all: {i:0, e:0} };
+            const { todayStr, startW, startM } = getDates(); let unique = new Set();
 
-            data[type].forEach(r => { unique.add(r.date); stats.all.i += r.income; stats.all.e += r.expense; if (r.date === todayStr) { stats.day.i += r.income; stats.day.e += r.expense; } });
+            data[type].forEach(r => {
+                unique.add(r.date); stats.all.i += r.income; stats.all.e += r.expense;
+                if (r.date === todayStr) { stats.day.i += r.income; stats.day.e += r.expense; }
+                if (r.date >= startW) { stats.week.i += r.income; stats.week.e += r.expense; }
+                if (r.date >= startM) { stats.month.i += r.income; stats.month.e += r.expense; }
+            });
 
             const totalP = stats.all.i - stats.all.e; const avg = unique.size > 0 ? (totalP / unique.size) : 0;
-            const calc = (i, e) => ({ p: i - e, r: e > 0 ? ((i - e)/e)*100 : (i > 0 ? 100 : 0) });
+            const day = calcROI(stats.day.i, stats.day.e); const week = calcROI(stats.week.i, stats.week.e); const month = calcROI(stats.month.i, stats.month.e); const all = calcROI(stats.all.i, stats.all.e);
 
-            const today = calc(stats.day.i, stats.day.e); const all = calc(stats.all.i, stats.all.e);
+            const makeBox = (label, obj) => `<div class="stat-box"><div class="period">${label}</div><div class="roi ${obj.p > 0 ? '' : (obj.p < 0 ? 'negative' : 'neutral')}">${obj.p > 0 ? '+' : ''}${obj.r.toFixed(0)}%</div><div class="profit ${obj.p > 0 ? 'positive' : (obj.p < 0 ? 'negative' : 'neutral')}">${obj.p >= 0 ? '+' : ''}$${obj.p.toFixed(0)}</div></div>`;
 
             cont.innerHTML = `
-                <div class="stat-box"><div class="period">СЕГОДНЯ</div><div class="roi ${today.p > 0 ? '' : (today.p < 0 ? 'negative' : 'neutral')}">${today.p > 0 ? '+' : ''}${today.r.toFixed(0)}%</div><div class="profit ${today.p > 0 ? 'positive' : (today.p < 0 ? 'negative' : 'neutral')}">${today.p >= 0 ? '+' : ''}$${today.p.toFixed(0)}</div></div>
-                <div class="stat-box"><div class="period">ВСЕ ВРЕМЯ</div><div class="roi ${all.p > 0 ? '' : (all.p < 0 ? 'negative' : 'neutral')}">${all.p > 0 ? '+' : ''}${all.r.toFixed(0)}%</div><div class="profit ${all.p > 0 ? 'positive' : (all.p < 0 ? 'negative' : 'neutral')}">${all.p >= 0 ? '+' : ''}$${all.p.toFixed(0)}</div></div>
+                ${makeBox('СЕГОДНЯ', day)} ${makeBox('ЗА НЕДЕЛЮ', week)}
+                ${makeBox('ЗА МЕСЯЦ', month)} ${makeBox('ВСЕ ВРЕМЯ', all)}
                 <div class="stat-box full-width" style="border-top: 1px solid rgba(255,255,255,0.05)"><div class="period">СРЕДНИЙ ПРОФИТ В ДЕНЬ</div><div class="roi ${avg > 0 ? '' : (avg < 0 ? 'negative' : 'neutral')}" style="font-size: 24px;">${avg >= 0 ? '+' : ''}$${avg.toFixed(0)}</div></div>
             `;
         }
 
-        function renderHistory(type) {
-            const cont = document.getElementById(`history-${type}`);
-            const sorted = [...data[type]].sort((a, b) => new Date(b.date) - new Date(a.date));
-            if (!sorted.length) return cont.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-secondary)">Нет записей</div>';
+        function calcCustomRange(type) {
+            const from = document.getElementById(`date-from-${type}`).value; const to = document.getElementById(`date-to-${type}`).value;
+            if (!from || !to) return alert('Выбери обе даты'); if (from > to) return alert('Начальная дата больше конечной');
 
+            let i = 0, e = 0;
+            data[type].forEach(r => { if (r.date >= from && r.date <= to) { i += r.income; e += r.expense; } });
+            const { p, r } = calcROI(i, e); const col = p > 0 ? 'positive' : (p < 0 ? 'negative' : 'neutral');
+            
+            const res = document.getElementById(`custom-result-${type}`);
+            res.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div><div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; font-weight: 700;">ПРОФИТ ЗА ПЕРИОД</div><div class="profit ${col}" style="font-size: 22px; font-weight: 800;">${p > 0 ? '+' : ''}$${p.toFixed(2)}</div><div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px; font-weight: 500;">Спенд: $${e.toFixed(2)} | Доход: $${i.toFixed(2)}</div></div>
+                    <div style="text-align: right;"><div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; font-weight: 700;">ROI</div><div class="roi ${col}" style="font-size: 22px; font-weight: 800;">${p > 0 ? '+' : ''}${r.toFixed(1)}%</div></div>
+                </div>`;
+            res.classList.remove('hidden');
+        }
+
+        function renderHistory(type) {
+            const cont = document.getElementById(`history-${type}`); const sorted = [...data[type]].sort((a, b) => new Date(b.date) - new Date(a.date));
+            if (!sorted.length) return cont.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-secondary)">Нет записей</div>';
             cont.innerHTML = sorted.map(item => {
-                const p = item.income - item.expense; const r = item.expense > 0 ? (p/item.expense)*100 : (item.income > 0 ? 100 : 0);
-                const col = p > 0 ? 'positive' : (p < 0 ? 'negative' : 'neutral'); const [y, m, d] = item.date.split('-');
-                return `
-                    <div class="history-item" onclick="openEditModal('${item.date}', '${type}')">
-                        <div><div class="history-date">${d}.${m}.${y}</div><div class="history-spend">Спенд: $${item.expense.toFixed(0)}</div></div>
-                        <div class="history-right"><div class="history-date ${col}">${p > 0 ? '+' : ''}$${p.toFixed(0)}</div><div class="history-spend ${col}">ROI ${r.toFixed(0)}%</div></div>
-                    </div>`;
+                const { p, r } = calcROI(item.income, item.expense); const col = p > 0 ? 'positive' : (p < 0 ? 'negative' : 'neutral'); const [y, m, d] = item.date.split('-');
+                return `<div class="history-item" onclick="openEditModal('${item.date}', '${type}')"><div><div class="history-date">${d}.${m}.${y}</div><div class="history-spend">Спенд: $${item.expense.toFixed(0)}</div></div><div class="history-right"><div class="history-date ${col}">${p > 0 ? '+' : ''}$${p.toFixed(0)}</div><div class="history-spend ${col}">ROI ${r.toFixed(0)}%</div></div></div>`;
             }).join('');
         }
 
-        // === ЗАДАЧИ ===
         function setTaskType(t) { newTaskType = t; document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active')); document.getElementById(`task-type-${t}`).classList.add('active'); if (t === 'goal') document.getElementById('task-goal-fields').classList.remove('hidden'); else document.getElementById('task-goal-fields').classList.add('hidden'); }
         function setPrio(p) { newTaskPrio = p; document.querySelectorAll('.prio-opt').forEach(opt => opt.classList.remove('active')); document.getElementById(`prio-${p}`).classList.add('active'); }
+        function saveTask() { const text = document.getElementById('task-text').value.trim(); if (!text) return; const task = { id: Date.now().toString(), text, done: false, type: newTaskType, prio: newTaskPrio }; if (newTaskType === 'goal') { task.target = parseFloat(document.getElementById('task-target').value) || 0; task.period = document.getElementById('task-period').value; } data.tasks.unshift(task); forceCloseModals(); saveData(); }
+        function getGoalProgress(period) { const { todayStr, startW, startM } = getDates(); return data.uslov.reduce((sum, r) => { const p = r.income - r.expense; if (period === 'day' && r.date === todayStr) return sum + p; if (period === 'week' && r.date >= startW) return sum + p; if (period === 'month' && r.date >= startM) return sum + p; return sum; }, 0); }
+        function renderTasks() { const cont = document.getElementById('tasks-list'); if (!data.tasks.length) return cont.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-secondary)">Задач нет</div>'; cont.innerHTML = data.tasks.map(t => { let goalHtml = ''; if (t.type === 'goal') { const current = getGoalProgress(t.period); let pct = t.target > 0 ? (current / t.target) * 100 : 0; pct = Math.max(0, Math.min(100, pct)); const labels = { 'day': 'Собрано за сегодня', 'week': 'Собрано за неделю', 'month': 'Собрано за месяц' }; goalHtml = `<div class="goal-container"><div class="goal-info"><span>${labels[t.period]}</span><span>$${current.toFixed(0)} / $${t.target}</span></div><div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${pct}%"></div></div></div>`; } return `<div class="task-wrapper ${t.done ? 'is-done' : ''}" data-id="${t.id}"><div class="task-bg task-bg-done">✓ Выполнено</div><div class="task-bg task-bg-delete">Удалить</div><div class="task-content"><div class="task-header"><div class="task-title">${t.text}</div><div class="priority-dot prio-${t.prio}"></div></div>${goalHtml}</div></div>`; }).join(''); initSwipes(); }
+        function initSwipes() { document.querySelectorAll('.task-wrapper').forEach(wrapper => { const content = wrapper.querySelector('.task-content'); let startX = 0, currentX = 0, isDragging = false, startY = 0; content.addEventListener('touchstart', e => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; isDragging = true; content.style.transition = 'none'; }, {passive: true}); content.addEventListener('touchmove', e => { if (!isDragging) return; const x = e.touches[0].clientX, y = e.touches[0].clientY; const diffX = x - startX, diffY = y - startY; if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) { e.preventDefault(); currentX = Math.max(-100, Math.min(100, diffX)); content.style.transform = `translateX(${currentX}px)`; } else if (Math.abs(diffY) > 10) { isDragging = false; } }, {passive: false}); content.addEventListener('touchend', () => { if (!isDragging) return; isDragging = false; content.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)'; const id = wrapper.dataset.id; if (currentX > 60) { const task = data.tasks.find(t => t.id === id); task.done = !task.done; saveData(); } else if (currentX < -60) { data.tasks = data.tasks.filter(t => t.id !== id); saveData(); } else { content.style.transform = `translateX(0px)`; } currentX = 0; }); }); }
 
-        function saveTask() {
-            const text = document.getElementById('task-text').value.trim(); if (!text) return;
-            const task = { id: Date.now().toString(), text, done: false, type: newTaskType, prio: newTaskPrio };
-            if (newTaskType === 'goal') { task.target = parseFloat(document.getElementById('task-target').value) || 0; task.period = document.getElementById('task-period').value; }
-            data.tasks.unshift(task); forceCloseModals(); saveData();
-        }
-
-        function getGoalProgress(period) {
-            const now = new Date(); const todayStr = now.toISOString().split('T')[0];
-            const dOw = now.getDay() || 7; const sOw = new Date(now); sOw.setDate(now.getDate() - dOw + 1); const startW = sOw.toISOString().split('T')[0];
-            const startM = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
-            return data.uslov.reduce((sum, r) => { const p = r.income - r.expense; if (period === 'day' && r.date === todayStr) return sum + p; if (period === 'week' && r.date >= startW) return sum + p; if (period === 'month' && r.date >= startM) return sum + p; return sum; }, 0);
-        }
-
-        function renderTasks() {
-            const cont = document.getElementById('tasks-list'); if (!data.tasks.length) return cont.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-secondary)">Задач нет</div>';
-            cont.innerHTML = data.tasks.map(t => {
-                let goalHtml = '';
-                if (t.type === 'goal') {
-                    const current = getGoalProgress(t.period); let pct = t.target > 0 ? (current / t.target) * 100 : 0; pct = Math.max(0, Math.min(100, pct));
-                    const labels = { 'day': 'Собрано за сегодня', 'week': 'Собрано за неделю', 'month': 'Собрано за месяц' };
-                    goalHtml = `<div class="goal-container"><div class="goal-info"><span>${labels[t.period]}</span><span>$${current.toFixed(0)} / $${t.target}</span></div><div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${pct}%"></div></div></div>`;
-                }
-                return `<div class="task-wrapper ${t.done ? 'is-done' : ''}" data-id="${t.id}"><div class="task-bg task-bg-done">✓ Выполнено</div><div class="task-bg task-bg-delete">Удалить</div><div class="task-content"><div class="task-header"><div class="task-title">${t.text}</div><div class="priority-dot prio-${t.prio}"></div></div>${goalHtml}</div></div>`;
-            }).join(''); initSwipes();
-        }
-
-        function initSwipes() {
-            document.querySelectorAll('.task-wrapper').forEach(wrapper => {
-                const content = wrapper.querySelector('.task-content'); let startX = 0, currentX = 0, isDragging = false, startY = 0;
-                content.addEventListener('touchstart', e => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; isDragging = true; content.style.transition = 'none'; }, {passive: true});
-                content.addEventListener('touchmove', e => { if (!isDragging) return; const x = e.touches[0].clientX, y = e.touches[0].clientY; const diffX = x - startX, diffY = y - startY; if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) { e.preventDefault(); currentX = Math.max(-100, Math.min(100, diffX)); content.style.transform = `translateX(${currentX}px)`; } else if (Math.abs(diffY) > 10) { isDragging = false; } }, {passive: false});
-                content.addEventListener('touchend', () => { if (!isDragging) return; isDragging = false; content.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)'; const id = wrapper.dataset.id; if (currentX > 60) { const task = data.tasks.find(t => t.id === id); task.done = !task.done; saveData(); } else if (currentX < -60) { data.tasks = data.tasks.filter(t => t.id !== id); saveData(); } else { content.style.transform = `translateX(0px)`; } currentX = 0; });
-            });
-        }
-
-        // === ЗАМЕТКИ ===
-        const noteArea = document.getElementById('note-textarea');
-        noteArea.addEventListener('input', e => { if (!currentNoteId) return; const note = data.notes.find(n => n.id === currentNoteId); if (note) { note.text = e.target.value; note.date = new Date().toISOString(); saveData(); }});
+        const noteArea = document.getElementById('note-textarea'); noteArea.addEventListener('input', e => { if (!currentNoteId) return; const note = data.notes.find(n => n.id === currentNoteId); if (note) { note.text = e.target.value; note.date = new Date().toISOString(); saveData(); }});
         function createNewNote() { const id = Date.now().toString(); data.notes.unshift({ id, text: '', date: new Date().toISOString() }); openNoteEditor(id); saveData(); }
         function openNoteEditor(id) { currentNoteId = id; const note = data.notes.find(n => n.id === id); noteArea.value = note ? note.text : ''; document.getElementById('note-editor').classList.add('active'); setTimeout(() => noteArea.focus(), 300); }
         function closeNoteEditor() { const note = data.notes.find(n => n.id === currentNoteId); if (note && note.text.trim() === '') { data.notes = data.notes.filter(n => n.id !== currentNoteId); saveData(); } document.getElementById('note-editor').classList.remove('active'); currentNoteId = null; }
