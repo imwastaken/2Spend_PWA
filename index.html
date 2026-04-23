@@ -13,9 +13,11 @@
             --card: #1C1C1E;
             --text: #FFFFFF;
             --text-secondary: #8E8E93;
-            --accent: #FF9F0A; /* Нативный iOS темно-оранжевый */
+            --accent: #FF9F0A;
+            --accent-gradient: linear-gradient(135deg, #FF9F0A, #FF7A00);
             --green: #32D74B;
             --red: #FF453A;
+            --yellow: #FFD60A;
             --border: #38383A;
         }
 
@@ -28,200 +30,191 @@
             margin: 0;
             padding: 0 0 100px 0;
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
         h1, h2, h3 { margin: 0; font-weight: 700; }
         
         .header {
             padding: max(20px, env(safe-area-inset-top)) 20px 15px 20px;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             position: sticky;
             top: 0;
             z-index: 10;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         .header h1 { font-size: 28px; letter-spacing: 0.5px; }
+        .header-actions { display: flex; gap: 16px; align-items: center; }
         
-        .add-btn {
-            background: transparent;
-            color: var(--accent);
-            border: none;
-            font-size: 24px;
-            padding: 0;
-            cursor: pointer;
+        .icon-btn {
+            background: transparent; color: var(--accent);
+            border: none; padding: 0; cursor: pointer; display: flex;
+            transition: transform 0.2s;
         }
+        .icon-btn:active { transform: scale(0.9); }
 
         .container { padding: 0 16px 16px 16px; }
-        
-        .card {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
+        .view { animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hidden { display: none !important; }
+
+        .card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
 
         /* Статистика */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1px;
-            background: var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-
-        .stat-box {
-            background: var(--card);
-            padding: 16px;
-        }
-
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
+        .stat-box { background: var(--card); padding: 16px; }
         .stat-box.full-width { grid-column: span 2; }
-        .stat-box .period { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; font-weight: 600; }
-        .stat-box .roi { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
-        .stat-box .profit { font-size: 15px; font-weight: 500; }
-        
-        .positive { color: var(--green); }
-        .negative { color: var(--red); }
-        .neutral { color: var(--text); }
+        .stat-box .period { font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;}
+        .stat-box .roi { font-size: 26px; font-weight: 800; margin-bottom: 4px; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-box .profit { font-size: 15px; font-weight: 600; }
+        .positive { color: var(--green); } .negative { color: var(--red); } .neutral { color: var(--text); }
 
         /* История */
         .section-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; padding-left: 4px; }
-        .history-list { background: var(--card); border-radius: 12px; overflow: hidden; }
-        .history-item {
-            padding: 16px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .history-list { background: var(--card); border-radius: 16px; overflow: hidden; }
+        .history-item { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .history-item:last-child { border-bottom: none; }
         .history-date { font-weight: 600; font-size: 16px; margin-bottom: 4px; }
         .history-spend { font-size: 13px; color: var(--text-secondary); }
         .history-right { text-align: right; }
 
-        /* Задачи */
-        .task-list { background: var(--card); border-radius: 12px; overflow: hidden; }
-        .task-item {
-            display: flex;
-            align-items: center;
-            padding: 16px;
-            border-bottom: 1px solid var(--border);
-            transition: opacity 0.2s;
+        /* Задачи (Свайпы) */
+        .task-list { border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; gap: 10px; }
+        .task-wrapper { position: relative; border-radius: 16px; overflow: hidden; background: var(--border); }
+        
+        .task-bg {
+            position: absolute; top: 0; bottom: 0; width: 100%; display: flex; align-items: center; padding: 0 20px; font-weight: 600; color: white;
         }
-        .task-item:last-child { border-bottom: none; }
-        .task-item.done { opacity: 0.5; }
-        .task-item.done .task-text { text-decoration: line-through; }
-        .task-checkbox {
-            width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--text-secondary);
-            margin-right: 12px; display: flex; align-items: center; justify-content: center;
+        .task-bg-done { background: var(--green); left: 0; justify-content: flex-start; }
+        .task-bg-delete { background: var(--red); right: 0; justify-content: flex-end; }
+        
+        .task-content {
+            background: var(--card); position: relative; z-index: 2; padding: 16px; border-radius: 16px;
+            display: flex; flex-direction: column; gap: 8px; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        .task-item.done .task-checkbox { background: var(--accent); border-color: var(--accent); }
-        .task-item.done .task-checkbox::after { content: '✓'; color: #000; font-weight: bold; }
-        .task-content { flex: 1; }
-        .task-text { font-size: 16px; }
+        
+        .task-wrapper.is-done .task-content { opacity: 0.6; }
+        .task-wrapper.is-done .task-title { text-decoration: line-through; color: var(--text-secondary); }
 
-        /* Заметки (iOS Style) */
-        .note-list { display: flex; flex-direction: column; gap: 12px; }
-        .note-item {
-            background: var(--card);
-            padding: 16px;
-            border-radius: 12px;
-            cursor: pointer;
-        }
-        .note-item-title { font-weight: 600; font-size: 16px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .note-item-preview { font-size: 14px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .note-item-date { font-size: 12px; color: var(--text-secondary); margin-top: 8px; }
+        .task-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+        .task-title { font-size: 16px; font-weight: 500; flex: 1; line-height: 1.3; }
+        .priority-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+        .prio-red { background: var(--red); box-shadow: 0 0 8px rgba(255, 69, 58, 0.5); }
+        .prio-yellow { background: var(--yellow); box-shadow: 0 0 8px rgba(255, 214, 10, 0.5); }
+        .prio-green { background: var(--green); box-shadow: 0 0 8px rgba(50, 215, 75, 0.5); }
+
+        /* Прогресс-бар финансовых целей */
+        .goal-container { margin-top: 4px; }
+        .goal-info { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
+        .progress-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--accent-gradient); border-radius: 3px; transition: width 0.5s ease; }
 
         /* Навигация */
         .tab-bar {
-            position: fixed; bottom: 0; width: 100%;
-            background: rgba(28, 28, 30, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border);
+            position: fixed; bottom: 0; width: 100%; background: rgba(28, 28, 30, 0.85);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-top: 1px solid var(--border);
             display: flex; padding-bottom: env(safe-area-inset-bottom); z-index: 100;
         }
-        .tab {
-            flex: 1; text-align: center; padding: 12px 0 8px 0;
-            color: var(--text-secondary); font-size: 10px; font-weight: 500; cursor: pointer;
-        }
+        .tab { flex: 1; text-align: center; padding: 12px 0 8px 0; color: var(--text-secondary); font-size: 10px; font-weight: 600; transition: color 0.2s; }
         .tab.active { color: var(--accent); }
-        .tab svg { width: 24px; height: 24px; margin-bottom: 4px; opacity: 0.7; }
-        .tab.active svg { opacity: 1; stroke: var(--accent); }
-        
-        .hidden { display: none !important; }
+        .tab svg { width: 24px; height: 24px; margin-bottom: 4px; transition: transform 0.2s, stroke 0.2s; opacity: 0.6; }
+        .tab.active svg { transform: scale(1.1); opacity: 1; stroke: url(#accent-grad); }
 
-        /* Модальные окна (Bottom Sheets) */
+        /* Модальные окна */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6); z-index: 200;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6);
+            z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         
         .modal-sheet {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: #1C1C1E; border-radius: 20px 20px 0 0;
+            position: fixed; bottom: 0; left: 0; right: 0; background: #1C1C1E; border-radius: 24px 24px 0 0;
             padding: 24px 20px calc(24px + env(safe-area-inset-bottom)) 20px;
-            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2);
-            z-index: 201;
+            transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 201;
         }
         .modal-overlay.active .modal-sheet { transform: translateY(0); }
         
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-title { font-size: 18px; font-weight: 600; }
-        .modal-close { background: transparent; border: none; color: var(--accent); font-size: 16px; font-weight: 600; padding: 0; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .modal-title { font-size: 20px; font-weight: 700; }
+        .modal-close { background: transparent; border: none; color: var(--text-secondary); font-size: 16px; font-weight: 600; padding: 0; }
 
         .input-group { margin-bottom: 16px; }
-        .input-group label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
-        input[type="text"], input[type="number"], input[type="date"] {
-            width: 100%; background: #2C2C2E; border: none; color: #fff;
-            padding: 14px 16px; border-radius: 10px; font-size: 16px; outline: none;
+        .input-group label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500; }
+        input[type="text"], input[type="number"], input[type="date"], select {
+            width: 100%; background: #2C2C2E; border: none; color: #fff; padding: 16px;
+            border-radius: 12px; font-size: 16px; outline: none; transition: background 0.2s;
         }
-        input[type="date"] { color-scheme: dark; }
+        input:focus, select:focus { background: #3A3A3C; }
         
         .btn-primary {
-            width: 100%; background: var(--accent); color: #000; border: none;
-            padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; margin-top: 10px;
+            width: 100%; background: var(--accent-gradient); color: #fff; border: none; padding: 18px;
+            border-radius: 14px; font-size: 16px; font-weight: 700; margin-top: 10px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: transform 0.2s;
         }
+        .btn-primary:active { transform: scale(0.97); }
+        .flex-row { display: flex; gap: 12px; } .flex-row .input-group { flex: 1; }
 
-        .flex-row { display: flex; gap: 12px; }
-        .flex-row .input-group { flex: 1; }
+        /* Селекторы для задач */
+        .type-selector { display: flex; background: #2C2C2E; border-radius: 12px; padding: 4px; margin-bottom: 16px; }
+        .type-btn { flex: 1; text-align: center; padding: 10px; font-size: 14px; font-weight: 600; color: var(--text-secondary); border-radius: 10px; transition: 0.2s; }
+        .type-btn.active { background: var(--card); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
 
-        /* Полноэкранный редактор заметок */
+        .prio-selector { display: flex; gap: 15px; margin-top: 5px; }
+        .prio-opt { width: 30px; height: 30px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: 0.2s; }
+        .prio-opt.active { border-color: var(--text); transform: scale(1.1); }
+
+        /* Темы */
+        .theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 10px; }
+        .theme-circle { width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; border: 3px solid transparent; }
+        .theme-circle.active { border-color: var(--text); }
+        .theme-circle::after { content: ''; width: 60%; height: 60%; border-radius: 50%; background: currentColor; }
+
+        /* Заметки */
+        .note-list { display: flex; flex-direction: column; gap: 12px; }
+        .note-item { background: var(--card); padding: 16px; border-radius: 16px; cursor: pointer; transition: transform 0.2s; }
+        .note-item:active { transform: scale(0.98); }
+        .note-item-title { font-weight: 600; font-size: 16px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .note-item-preview { font-size: 14px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
         .full-screen-modal {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--bg); z-index: 300;
-            transform: translateX(100%); transition: transform 0.3s;
-            display: flex; flex-direction: column;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 300;
+            transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column;
         }
         .full-screen-modal.active { transform: translateX(0); }
-        .note-editor-header {
-            padding: max(10px, env(safe-area-inset-top)) 16px 10px 16px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid var(--border);
-        }
-        .note-textarea {
-            flex: 1; width: 100%; background: transparent; border: none; color: #fff;
-            padding: 16px; font-size: 17px; line-height: 1.5; outline: none; resize: none;
-        }
+        .note-editor-header { padding: max(10px, env(safe-area-inset-top)) 16px 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .note-textarea { flex: 1; width: 100%; background: transparent; border: none; color: #fff; padding: 20px; font-size: 17px; line-height: 1.5; outline: none; resize: none; }
     </style>
 </head>
 <body>
 
+    <svg width="0" height="0" style="position:absolute;">
+        <defs>
+            <linearGradient id="accent-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" id="grad-start" stop-color="#FF9F0A" />
+                <stop offset="100%" id="grad-end" stop-color="#FF7A00" />
+            </linearGradient>
+        </defs>
+    </svg>
+
     <div class="header">
         <h1 id="header-title">ФАКТ</h1>
-        <button class="add-btn" id="main-add-btn" onclick="openAddModal()">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </button>
+        <div class="header-actions">
+            <button class="icon-btn" onclick="openSettingsModal()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </button>
+            <button class="icon-btn" onclick="openAddModal()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+        </div>
     </div>
 
     <div class="container">
-        
         <div id="view-fact" class="view">
             <div class="stats-grid" id="stats-fact"></div>
             <div class="section-title">История по дням</div>
@@ -241,28 +234,18 @@
         <div id="view-notes" class="view hidden">
             <div class="note-list" id="notes-list"></div>
         </div>
-
     </div>
 
     <div class="modal-overlay" id="stat-modal-overlay" onclick="closeModals(event)">
         <div class="modal-sheet" id="stat-modal-sheet">
             <div class="modal-header">
-                <div class="modal-title" id="stat-modal-title">Добавить запись</div>
+                <div class="modal-title" id="stat-modal-title">Новая запись</div>
                 <button class="modal-close" onclick="forceCloseModals()">Отмена</button>
             </div>
-            <div class="input-group">
-                <label>Дата</label>
-                <input type="date" id="stat-date">
-            </div>
+            <div class="input-group"><label>Дата</label><input type="date" id="stat-date"></div>
             <div class="flex-row">
-                <div class="input-group">
-                    <label>Доход ($)</label>
-                    <input type="number" id="stat-income" placeholder="0" step="0.01">
-                </div>
-                <div class="input-group">
-                    <label>Расход ($)</label>
-                    <input type="number" id="stat-expense" placeholder="0" step="0.01">
-                </div>
+                <div class="input-group"><label>Доход ($)</label><input type="number" id="stat-income" placeholder="0"></div>
+                <div class="input-group"><label>Расход ($)</label><input type="number" id="stat-expense" placeholder="0"></div>
             </div>
             <button class="btn-primary" onclick="saveStat()">Сохранить</button>
         </div>
@@ -274,305 +257,390 @@
                 <div class="modal-title">Новая задача</div>
                 <button class="modal-close" onclick="forceCloseModals()">Отмена</button>
             </div>
+            
+            <div class="type-selector">
+                <div class="type-btn active" id="task-type-regular" onclick="setTaskType('regular')">Обычная</div>
+                <div class="type-btn" id="task-type-goal" onclick="setTaskType('goal')">Цель (УСЛОВ)</div>
+            </div>
+
             <div class="input-group">
                 <label>Описание</label>
-                <input type="text" id="task-text" placeholder="Что нужно сделать?">
+                <input type="text" id="task-text" placeholder="Запустить TikTok, подать апелляцию...">
             </div>
+
+            <div id="task-goal-fields" class="hidden">
+                <div class="flex-row">
+                    <div class="input-group">
+                        <label>Цель ($)</label>
+                        <input type="number" id="task-target" placeholder="1000">
+                    </div>
+                    <div class="input-group">
+                        <label>Период</label>
+                        <select id="task-period">
+                            <option value="day">За сегодня</option>
+                            <option value="week">За неделю</option>
+                            <option value="month">За месяц</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Приоритет</label>
+                <div class="prio-selector">
+                    <div class="prio-opt" style="background: var(--red);" onclick="setPrio('red')" id="prio-red"></div>
+                    <div class="prio-opt active" style="background: var(--yellow);" onclick="setPrio('yellow')" id="prio-yellow"></div>
+                    <div class="prio-opt" style="background: var(--green);" onclick="setPrio('green')" id="prio-green"></div>
+                </div>
+            </div>
+
             <button class="btn-primary" onclick="saveTask()">Добавить</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="settings-modal-overlay" onclick="closeModals(event)">
+        <div class="modal-sheet" id="settings-modal-sheet">
+            <div class="modal-header">
+                <div class="modal-title">Настройки</div>
+                <button class="modal-close" onclick="forceCloseModals()">Готово</button>
+            </div>
+            <div class="input-group">
+                <label>Цветовая тема</label>
+                <div class="theme-grid">
+                    <div class="theme-circle" style="color: #FF9F0A;" onclick="setTheme('orange')" id="theme-orange"></div>
+                    <div class="theme-circle" style="color: #32D74B;" onclick="setTheme('green')" id="theme-green"></div>
+                    <div class="theme-circle" style="color: #BF5AF2;" onclick="setTheme('purple')" id="theme-purple"></div>
+                    <div class="theme-circle" style="color: #FF453A;" onclick="setTheme('red')" id="theme-red"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="full-screen-modal" id="note-editor">
         <div class="note-editor-header">
-            <button class="modal-close" onclick="closeNoteEditor()">< Назад</button>
+            <button class="modal-close" onclick="closeNoteEditor()" style="color: var(--accent);">< Назад</button>
             <button class="modal-close" onclick="deleteCurrentNote()" style="color: var(--red);">Удалить</button>
         </div>
-        <textarea class="note-textarea" id="note-textarea" placeholder="Начни печатать..."></textarea>
+        <textarea class="note-textarea" id="note-textarea" placeholder="Записывай сетапы, статусы аккаунтов, идеи..."></textarea>
     </div>
 
     <div class="tab-bar">
         <div class="tab active" onclick="switchTab('fact')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4H6a2 2 0 0 1-2-2V6Z"/></svg>
-            <br>ФАКТ
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4H6a2 2 0 0 1-2-2V6Z"/></svg><br>ФАКТ
         </div>
         <div class="tab" onclick="switchTab('uslov')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-            <br>УСЛОВ
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><br>УСЛОВ
         </div>
         <div class="tab" onclick="switchTab('tasks')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
-            <br>ЗАДАЧИ
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg><br>ЗАДАЧИ
         </div>
         <div class="tab" onclick="switchTab('notes')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            <br>ЗАМЕТКИ
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><br>ЗАМЕТКИ
         </div>
     </div>
 
     <script>
+        // === ИНИЦИАЛИЗАЦИЯ И ТЕМЫ ===
         let currentTab = 'fact';
         let currentNoteId = null;
+        let newTaskType = 'regular';
+        let newTaskPrio = 'yellow';
 
-        // Инициализация базы данных
-        let data = JSON.parse(localStorage.getItem('2spend_data_v2')) || { fact: [], uslov: [], tasks: [], notes: [] };
-        
-        // Миграция со старых версий
-        const oldData = JSON.parse(localStorage.getItem('2spend_data'));
-        if (oldData && !localStorage.getItem('2spend_data_v2')) {
-            data.fact = oldData.fact || [];
-            data.uslov = oldData.uslov || [];
-            data.tasks = oldData.tasks || [];
-            if (typeof oldData.notes === 'string' && oldData.notes.trim() !== '') {
-                data.notes = [{ id: Date.now().toString(), text: oldData.notes, date: new Date().toISOString() }];
-            } else {
-                data.notes = oldData.notes || [];
-            }
+        let data = JSON.parse(localStorage.getItem('2spend_data_v3')) || { 
+            fact: [], uslov: [], tasks: [], notes: [], settings: { theme: 'orange' }
+        };
+
+        // Миграция старых данных
+        const oldData = JSON.parse(localStorage.getItem('2spend_data_v2'));
+        if (oldData && !localStorage.getItem('2spend_data_v3')) {
+            data.fact = oldData.fact || []; data.uslov = oldData.uslov || [];
+            data.tasks = oldData.tasks || []; data.notes = oldData.notes || [];
             saveData();
         }
 
-        document.getElementById('stat-date').value = new Date().toISOString().split('T')[0];
+        const THEMES = {
+            orange: { start: '#FF9F0A', end: '#FF7A00' },
+            green: { start: '#32D74B', end: '#28CD41' },
+            purple: { start: '#BF5AF2', end: '#AF52DE' },
+            red: { start: '#FF453A', end: '#FF3B30' }
+        };
 
-        function saveData() {
-            localStorage.setItem('2spend_data_v2', JSON.stringify(data));
-            renderAll();
+        function applyTheme(colorKey) {
+            const t = THEMES[colorKey];
+            document.documentElement.style.setProperty('--accent', t.start);
+            document.documentElement.style.setProperty('--accent-gradient', `linear-gradient(135deg, ${t.start}, ${t.end})`);
+            document.getElementById('grad-start').setAttribute('stop-color', t.start);
+            document.getElementById('grad-end').setAttribute('stop-color', t.end);
+            
+            document.querySelectorAll('.theme-circle').forEach(el => el.classList.remove('active'));
+            document.getElementById(`theme-${colorKey}`).classList.add('active');
         }
 
+        function setTheme(colorKey) {
+            data.settings.theme = colorKey;
+            applyTheme(colorKey);
+            saveData();
+        }
+        applyTheme(data.settings.theme);
+        document.getElementById('stat-date').value = new Date().toISOString().split('T')[0];
+
+        function saveData() { localStorage.setItem('2spend_data_v3', JSON.stringify(data)); renderAll(); }
+
+        // === НАВИГАЦИЯ И МОДАЛКИ ===
         function switchTab(tab) {
             currentTab = tab;
             document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            
             document.getElementById(`view-${tab}`).classList.remove('hidden');
             event.currentTarget.classList.add('active');
-            
             const titles = { 'fact': 'ФАКТ', 'uslov': 'УСЛОВ', 'tasks': 'ЗАДАЧИ', 'notes': 'ЗАМЕТКИ' };
             document.getElementById('header-title').innerText = titles[tab];
         }
 
-        // --- Управление модалками ---
         function openAddModal() {
             if (currentTab === 'fact' || currentTab === 'uslov') {
-                document.getElementById('stat-modal-title').innerText = currentTab === 'fact' ? 'ФАКТ: Новая запись' : 'УСЛОВ: Новая запись';
+                document.getElementById('stat-modal-title').innerText = currentTab === 'fact' ? 'ФАКТ: Запись' : 'УСЛОВ: Запись';
                 document.getElementById('stat-modal-overlay').classList.add('active');
             } else if (currentTab === 'tasks') {
                 document.getElementById('task-modal-overlay').classList.add('active');
-            } else if (currentTab === 'notes') {
-                createNewNote();
-            }
+            } else if (currentTab === 'notes') { createNewNote(); }
         }
-
-        function closeModals(e) {
-            if (e.target.classList.contains('modal-overlay')) forceCloseModals();
-        }
-
+        function openSettingsModal() { document.getElementById('settings-modal-overlay').classList.add('active'); }
+        function closeModals(e) { if (e.target.classList.contains('modal-overlay')) forceCloseModals(); }
         function forceCloseModals() {
             document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
-            document.getElementById('stat-income').value = '';
-            document.getElementById('stat-expense').value = '';
-            document.getElementById('task-text').value = '';
+            document.getElementById('stat-income').value = ''; document.getElementById('stat-expense').value = '';
+            document.getElementById('task-text').value = ''; document.getElementById('task-target').value = '';
         }
 
-        // --- Логика Статистики ---
+        // === СТАТИСТИКА ===
         function saveStat() {
             const date = document.getElementById('stat-date').value;
             const income = parseFloat(document.getElementById('stat-income').value) || 0;
             const expense = parseFloat(document.getElementById('stat-expense').value) || 0;
-
             if (!date || (income === 0 && expense === 0)) return alert('Заполни поля');
 
-            const existingIndex = data[currentTab].findIndex(item => item.date === date);
-            if (existingIndex >= 0) {
-                data[currentTab][existingIndex].income += income;
-                data[currentTab][existingIndex].expense += expense;
-            } else {
-                data[currentTab].push({ date, income, expense });
-            }
-
-            forceCloseModals();
-            saveData();
-        }
-
-        function calcROI(income, expense) {
-            const profit = income - expense;
-            if (expense > 0) return (profit / expense) * 100;
-            if (income > 0) return 100;
-            return 0;
+            const idx = data[currentTab].findIndex(i => i.date === date);
+            if (idx >= 0) { data[currentTab][idx].income += income; data[currentTab][idx].expense += expense; } 
+            else { data[currentTab].push({ date, income, expense }); }
+            forceCloseModals(); saveData();
         }
 
         function renderStats(type) {
-            const container = document.getElementById(`stats-${type}`);
-            let stats = { day: {i:0, e:0}, week: {i:0, e:0}, month: {i:0, e:0}, all: {i:0, e:0} };
+            const cont = document.getElementById(`stats-${type}`);
+            let stats = { day: {i:0, e:0}, all: {i:0, e:0} };
             const todayStr = new Date().toISOString().split('T')[0];
-            let uniqueDays = new Set();
+            let unique = new Set();
 
             data[type].forEach(r => {
-                uniqueDays.add(r.date);
+                unique.add(r.date);
                 stats.all.i += r.income; stats.all.e += r.expense;
                 if (r.date === todayStr) { stats.day.i += r.income; stats.day.e += r.expense; }
-                // Упрощенная логика для недели/месяца для экономии места
             });
 
-            const totalProfit = stats.all.i - stats.all.e;
-            const avgDaily = uniqueDays.size > 0 ? (totalProfit / uniqueDays.size) : 0;
+            const totalP = stats.all.i - stats.all.e;
+            const avg = unique.size > 0 ? (totalP / unique.size) : 0;
+            const calc = (i, e) => ({ p: i - e, r: e > 0 ? ((i - e)/e)*100 : (i > 0 ? 100 : 0) });
 
-            const makeBox = (label, i, e) => {
-                const p = i - e;
-                const r = calcROI(i, e);
-                const color = p > 0 ? 'positive' : (p < 0 ? 'negative' : 'neutral');
-                return `<div class="stat-box">
-                    <div class="period">${label}</div>
-                    <div class="roi ${color}">${p > 0 ? '+' : ''}${r.toFixed(0)}%</div>
-                    <div class="profit ${color}">${p >= 0 ? '+' : ''}$${p.toFixed(0)}</div>
-                </div>`;
-            };
+            const today = calc(stats.day.i, stats.day.e);
+            const all = calc(stats.all.i, stats.all.e);
 
-            container.innerHTML = `
-                ${makeBox('СЕГОДНЯ', stats.day.i, stats.day.e)}
-                ${makeBox('ВСЕ ВРЕМЯ', stats.all.i, stats.all.e)}
+            cont.innerHTML = `
+                <div class="stat-box">
+                    <div class="period">СЕГОДНЯ</div>
+                    <div class="roi ${today.p > 0 ? '' : (today.p < 0 ? 'negative' : 'neutral')}">${today.p > 0 ? '+' : ''}${today.r.toFixed(0)}%</div>
+                    <div class="profit ${today.p > 0 ? 'positive' : (today.p < 0 ? 'negative' : 'neutral')}">${today.p >= 0 ? '+' : ''}$${today.p.toFixed(0)}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="period">ВСЕ ВРЕМЯ</div>
+                    <div class="roi ${all.p > 0 ? '' : (all.p < 0 ? 'negative' : 'neutral')}">${all.p > 0 ? '+' : ''}${all.r.toFixed(0)}%</div>
+                    <div class="profit ${all.p > 0 ? 'positive' : (all.p < 0 ? 'negative' : 'neutral')}">${all.p >= 0 ? '+' : ''}$${all.p.toFixed(0)}</div>
+                </div>
                 <div class="stat-box full-width" style="border-top: 1px solid var(--border)">
                     <div class="period">СРЕДНИЙ ПРОФИТ В ДЕНЬ</div>
-                    <div class="roi ${avgDaily > 0 ? 'positive' : 'neutral'}">${avgDaily >= 0 ? '+' : ''}$${avgDaily.toFixed(0)}</div>
+                    <div class="roi ${avg > 0 ? '' : (avg < 0 ? 'negative' : 'neutral')}">${avg >= 0 ? '+' : ''}$${avg.toFixed(0)}</div>
                 </div>
             `;
         }
 
         function renderHistory(type) {
-            const container = document.getElementById(`history-${type}`);
+            const cont = document.getElementById(`history-${type}`);
             const sorted = [...data[type]].sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            if (sorted.length === 0) {
-                container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-secondary)">Нет записей</div>';
-                return;
-            }
+            if (!sorted.length) return cont.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-secondary)">Нет записей</div>';
 
-            container.innerHTML = sorted.map(item => {
-                const profit = item.income - item.expense;
-                const roi = calcROI(item.income, item.expense);
-                const color = profit > 0 ? 'positive' : (profit < 0 ? 'negative' : 'neutral');
+            cont.innerHTML = sorted.map(item => {
+                const p = item.income - item.expense;
+                const r = item.expense > 0 ? (p/item.expense)*100 : (item.income > 0 ? 100 : 0);
+                const col = p > 0 ? 'positive' : (p < 0 ? 'negative' : 'neutral');
                 const [y, m, d] = item.date.split('-');
-
                 return `
                     <div class="history-item">
-                        <div>
-                            <div class="history-date">${d}.${m}.${y}</div>
-                            <div class="history-spend">Спенд: $${item.expense.toFixed(0)}</div>
-                        </div>
-                        <div class="history-right">
-                            <div class="history-date ${color}">${profit > 0 ? '+' : ''}$${profit.toFixed(0)}</div>
-                            <div class="history-spend ${color}">ROI ${roi.toFixed(0)}%</div>
-                        </div>
-                    </div>
-                `;
+                        <div><div class="history-date">${d}.${m}.${y}</div><div class="history-spend">Спенд: $${item.expense.toFixed(0)}</div></div>
+                        <div class="history-right"><div class="history-date ${col}">${p > 0 ? '+' : ''}$${p.toFixed(0)}</div><div class="history-spend ${col}">ROI ${r.toFixed(0)}%</div></div>
+                    </div>`;
             }).join('');
         }
 
-        // --- Задачи ---
+        // === ЗАДАЧИ И ЦЕЛИ ===
+        function setTaskType(t) {
+            newTaskType = t;
+            document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`task-type-${t}`).classList.add('active');
+            if (t === 'goal') document.getElementById('task-goal-fields').classList.remove('hidden');
+            else document.getElementById('task-goal-fields').classList.add('hidden');
+        }
+
+        function setPrio(p) {
+            newTaskPrio = p;
+            document.querySelectorAll('.prio-opt').forEach(opt => opt.classList.remove('active'));
+            document.getElementById(`prio-${p}`).classList.add('active');
+        }
+
         function saveTask() {
             const text = document.getElementById('task-text').value.trim();
             if (!text) return;
-            data.tasks.unshift({ id: Date.now().toString(), text, done: false });
-            forceCloseModals();
-            saveData();
+            const task = { id: Date.now().toString(), text, done: false, type: newTaskType, prio: newTaskPrio };
+            if (newTaskType === 'goal') {
+                task.target = parseFloat(document.getElementById('task-target').value) || 0;
+                task.period = document.getElementById('task-period').value;
+            }
+            data.tasks.push(task); // В конец списка, чтоб старые были сверху
+            forceCloseModals(); saveData();
         }
 
-        function toggleTask(id) {
-            const task = data.tasks.find(t => t.id === id);
-            if (task) { task.done = !task.done; saveData(); }
+        function getGoalProgress(period) {
+            const now = new Date(); const todayStr = now.toISOString().split('T')[0];
+            const dOw = now.getDay() || 7; const sOw = new Date(now); sOw.setDate(now.getDate() - dOw + 1);
+            const startW = sOw.toISOString().split('T')[0];
+            const startM = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+
+            return data.uslov.reduce((sum, r) => {
+                const p = r.income - r.expense;
+                if (period === 'day' && r.date === todayStr) return sum + p;
+                if (period === 'week' && r.date >= startW) return sum + p;
+                if (period === 'month' && r.date >= startM) return sum + p;
+                return sum;
+            }, 0);
         }
 
         function renderTasks() {
-            const container = document.getElementById('tasks-list');
-            if (data.tasks.length === 0) {
-                container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-secondary)">Все задачи выполнены</div>';
-                return;
-            }
-            container.innerHTML = data.tasks.map(t => `
-                <div class="task-item ${t.done ? 'done' : ''}" onclick="toggleTask('${t.id}')">
-                    <div class="task-checkbox"></div>
-                    <div class="task-content"><div class="task-text">${t.text}</div></div>
-                </div>
-            `).join('');
+            const cont = document.getElementById('tasks-list');
+            if (!data.tasks.length) return cont.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-secondary)">Задач нет</div>';
+
+            cont.innerHTML = data.tasks.map(t => {
+                let goalHtml = '';
+                if (t.type === 'goal') {
+                    const current = getGoalProgress(t.period);
+                    const pct = t.target > 0 ? Math.min(100, Math.max(0, (current / t.target) * 100)) : 0;
+                    const labels = { 'day': 'За сегодня', 'week': 'За неделю', 'month': 'За месяц' };
+                    goalHtml = `
+                        <div class="goal-container">
+                            <div class="goal-info"><span>${labels[t.period]}</span><span>$${current.toFixed(0)} / $${t.target}</span></div>
+                            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${pct}%"></div></div>
+                        </div>`;
+                }
+
+                return `
+                    <div class="task-wrapper ${t.done ? 'is-done' : ''}" data-id="${t.id}">
+                        <div class="task-bg task-bg-done">✓ Выполнить</div>
+                        <div class="task-bg task-bg-delete">🗑 Удалить</div>
+                        <div class="task-content">
+                            <div class="task-header">
+                                <div class="task-title">${t.text}</div>
+                                <div class="priority-dot prio-${t.prio}"></div>
+                            </div>
+                            ${goalHtml}
+                        </div>
+                    </div>`;
+            }).join('');
+            initSwipes();
         }
 
-        // --- Заметки (Логика iOS Notes) ---
-        const noteTextarea = document.getElementById('note-textarea');
-        
-        noteTextarea.addEventListener('input', (e) => {
+        // --- Логика свайпов ---
+        function initSwipes() {
+            const wrappers = document.querySelectorAll('.task-wrapper');
+            wrappers.forEach(wrapper => {
+                const content = wrapper.querySelector('.task-content');
+                let startX = 0, currentX = 0, isDragging = false, startY = 0;
+
+                content.addEventListener('touchstart', e => {
+                    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+                    isDragging = true; content.style.transition = 'none';
+                }, {passive: true});
+
+                content.addEventListener('touchmove', e => {
+                    if (!isDragging) return;
+                    const x = e.touches[0].clientX, y = e.touches[0].clientY;
+                    const diffX = x - startX, diffY = y - startY;
+                    if (Math.abs(diffX) > Math.abs(diffY)) {
+                        e.preventDefault(); // Блокируем скролл если свайп горизонтальный
+                        currentX = Math.max(-100, Math.min(100, diffX));
+                        content.style.transform = `translateX(${currentX}px)`;
+                    } else { isDragging = false; } // Если свайп вертикальный - отдаем управление скроллу
+                }, {passive: false});
+
+                content.addEventListener('touchend', () => {
+                    if (!isDragging) return; isDragging = false;
+                    content.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                    const id = wrapper.dataset.id;
+                    
+                    if (currentX > 60) { // Свайп вправо - выполнить
+                        const task = data.tasks.find(t => t.id === id);
+                        task.done = !task.done; saveData();
+                    } else if (currentX < -60) { // Свайп влево - удалить
+                        data.tasks = data.tasks.filter(t => t.id !== id); saveData();
+                    } else { content.style.transform = `translateX(0px)`; } // Возврат
+                    currentX = 0;
+                });
+            });
+        }
+
+        // === ЗАМЕТКИ ===
+        const noteArea = document.getElementById('note-textarea');
+        noteArea.addEventListener('input', e => {
             if (!currentNoteId) return;
             const note = data.notes.find(n => n.id === currentNoteId);
-            if (note) {
-                note.text = e.target.value;
-                note.date = new Date().toISOString();
-                saveData();
-            }
+            if (note) { note.text = e.target.value; note.date = new Date().toISOString(); saveData(); }
         });
 
         function createNewNote() {
             const id = Date.now().toString();
             data.notes.unshift({ id, text: '', date: new Date().toISOString() });
-            openNoteEditor(id);
-            saveData();
+            openNoteEditor(id); saveData();
         }
 
         function openNoteEditor(id) {
             currentNoteId = id;
             const note = data.notes.find(n => n.id === id);
-            noteTextarea.value = note ? note.text : '';
+            noteArea.value = note ? note.text : '';
             document.getElementById('note-editor').classList.add('active');
-            setTimeout(() => noteTextarea.focus(), 300);
+            setTimeout(() => noteArea.focus(), 300);
         }
 
         function closeNoteEditor() {
-            // Если заметка пустая при закрытии - удаляем её автоматически
             const note = data.notes.find(n => n.id === currentNoteId);
-            if (note && note.text.trim() === '') {
-                data.notes = data.notes.filter(n => n.id !== currentNoteId);
-                saveData();
-            }
-            document.getElementById('note-editor').classList.remove('active');
-            currentNoteId = null;
+            if (note && note.text.trim() === '') { data.notes = data.notes.filter(n => n.id !== currentNoteId); saveData(); }
+            document.getElementById('note-editor').classList.remove('active'); currentNoteId = null;
         }
 
         function deleteCurrentNote() {
             if(confirm('Удалить эту заметку?')) {
-                data.notes = data.notes.filter(n => n.id !== currentNoteId);
-                saveData();
-                closeNoteEditor();
+                data.notes = data.notes.filter(n => n.id !== currentNoteId); saveData(); closeNoteEditor();
             }
         }
 
         function renderNotes() {
-            const container = document.getElementById('notes-list');
-            if (data.notes.length === 0) {
-                container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-secondary)">Нет заметок</div>';
-                return;
-            }
-            container.innerHTML = data.notes.map(n => {
+            const cont = document.getElementById('notes-list');
+            if (!data.notes.length) return cont.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-secondary)">Нет заметок</div>';
+            cont.innerHTML = data.notes.map(n => {
                 const lines = n.text.split('\n').filter(l => l.trim() !== '');
                 const title = lines.length > 0 ? lines[0] : 'Новая заметка';
-                const preview = lines.length > 1 ? lines[1] : 'Нет дополнительного текста';
-                const d = new Date(n.date);
-                const dateStr = `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
-
-                return `
-                    <div class="note-item" onclick="openNoteEditor('${n.id}')">
-                        <div class="note-item-title">${title}</div>
-                        <div class="note-item-preview">${preview}</div>
-                        <div class="note-item-date">${dateStr}</div>
-                    </div>
-                `;
+                const preview = lines.length > 1 ? lines[1] : '...';
+                return `<div class="note-item" onclick="openNoteEditor('${n.id}')"><div class="note-item-title">${title}</div><div class="note-item-preview">${preview}</div></div>`;
             }).join('');
         }
 
-        function renderAll() {
-            renderStats('fact');
-            renderStats('uslov');
-            renderHistory('fact');
-            renderHistory('uslov');
-            renderTasks();
-            renderNotes();
-        }
-
+        function renderAll() { renderStats('fact'); renderStats('uslov'); renderHistory('fact'); renderHistory('uslov'); renderTasks(); renderNotes(); }
         renderAll();
     </script>
 </body>
